@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+.<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -20,7 +20,7 @@
         background-color: #0b0f19;
         color: #f8fafc;
         overflow: hidden;
-        transition: background-color 0.5s ease;
+        transition: background-color 0.8s ease;
     }
 
     .app-container {
@@ -29,9 +29,10 @@
         height: 100%;
         height: 100dvh;
         width: 100%;
+        position: relative;
     }
 
-    /* شاشة الدخول وإنشاء الغرف */
+    /* شاشات الدخول */
     .login-overlay {
         position: fixed;
         inset: 0;
@@ -60,7 +61,6 @@
         margin-bottom: 6px;
         font-size: 1.6rem;
         font-weight: 800;
-        letter-spacing: -0.5px;
     }
 
     .login-box p {
@@ -80,52 +80,26 @@
         outline: none;
         margin-bottom: 12px;
         text-align: center;
-        transition: border-color 0.2s;
-    }
-
-    .login-box input:focus {
-        border-color: #ef4444;
     }
 
     .btn-group {
         display: flex;
         gap: 10px;
-        margin-top: 6px;
     }
 
-    .btn-primary {
+    .btn-primary, .btn-secondary {
         flex: 1;
-        background-color: #dc2626;
-        color: white;
-        border: none;
         padding: 12px;
         border-radius: 10px;
         font-weight: bold;
         font-size: 0.9rem;
         cursor: pointer;
-        transition: background-color 0.2s;
-    }
-
-    .btn-primary:hover {
-        background-color: #b91c1c;
-    }
-
-    .btn-secondary {
-        flex: 1;
-        background-color: #2563eb;
-        color: white;
         border: none;
-        padding: 12px;
-        border-radius: 10px;
-        font-weight: bold;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: background-color 0.2s;
+        color: white;
     }
 
-    .btn-secondary:hover {
-        background-color: #1d4ed8;
-    }
+    .btn-primary { background-color: #dc2626; }
+    .btn-secondary { background-color: #2563eb; }
 
     /* الشريط العلوي */
     header {
@@ -142,9 +116,6 @@
         color: #ef4444;
         font-size: 1.1rem;
         font-weight: 800;
-        display: flex;
-        align-items: center;
-        gap: 6px;
     }
 
     .room-info p {
@@ -152,13 +123,29 @@
         font-size: 0.75rem;
     }
 
-    .role-badge {
-        background-color: #1e293b;
+    .header-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .role-badge, .log-badge {
+        background: linear-gradient(135deg, #1e293b, #0f172a);
         padding: 6px 12px;
-        border-radius: 8px;
-        border: 1px solid #334155;
-        font-size: 0.8rem;
+        border-radius: 20px;
+        border: 1px solid #3b82f6;
+        font-size: 0.75rem;
         color: #94a3b8;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .role-badge:hover, .log-badge:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
     }
 
     .role-badge span {
@@ -188,6 +175,40 @@
         font-family: monospace;
     }
 
+    /* شريط التنبيه السينمائي الانتقالي */
+    .phase-banner {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: rgba(15, 23, 42, 0.95);
+        border: 2px solid #ef4444;
+        box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+        padding: 20px 40px;
+        border-radius: 16px;
+        text-align: center;
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .phase-banner.show {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .phase-banner h2 {
+        font-size: 1.8rem;
+        color: #facc15;
+        margin-bottom: 6px;
+    }
+
+    .phase-banner p {
+        font-size: 0.95rem;
+        color: #cbd5e1;
+    }
+
     /* شريط التحكم واللاعبين */
     .players-bar {
         background-color: #0f172a;
@@ -201,9 +222,7 @@
         flex-shrink: 0;
     }
 
-    .players-bar::-webkit-scrollbar {
-        display: none;
-    }
+    .players-bar::-webkit-scrollbar { display: none; }
 
     .player-card {
         background-color: #1e293b;
@@ -215,13 +234,26 @@
         flex-shrink: 0;
         font-size: 0.85rem;
         border: 1px solid #334155;
+        position: relative;
     }
 
     .player-card.dead {
         opacity: 0.4;
         text-decoration: line-through;
         background-color: #111827;
-        border-color: #1f2937;
+    }
+
+    /* مؤشر الاتصال (نقطة خضراء/رمادية) */
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        background-color: #64748b;
+    }
+    .status-dot.online {
+        background-color: #22c55e;
+        box-shadow: 0 0 6px #22c55e;
     }
 
     .action-btn-sm {
@@ -234,159 +266,39 @@
         cursor: pointer;
     }
 
-    .start-btn-sm {
-        background-color: #16a34a;
-        color: white;
-        border: none;
-        padding: 8px 14px;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        flex-shrink: 0;
-        cursor: pointer;
-        display: none;
-    }
+    .start-btn-sm { background-color: #16a34a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; cursor: pointer; display: none; }
+    .reset-btn-sm { background-color: #475569; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; display: none; }
+    .leave-btn-sm { background-color: #991b1b; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
 
-    .reset-btn-sm {
-        background-color: #475569;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        flex-shrink: 0;
-        cursor: pointer;
-        display: none;
-    }
+    /* الشات */
+    main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; position: relative; }
+    .chat-box { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
 
-    .leave-btn-sm {
-        background-color: #991b1b;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        flex-shrink: 0;
-        cursor: pointer;
-    }
+    .system-msg { text-align: center; margin: 4px 0; }
+    .system-msg span { background-color: #151d2a; color: #94a3b8; font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; border: 1px solid #243044; display: inline-block; white-space: pre-line; }
 
-    /* منطقة المحادثة */
-    main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        background-color: transparent;
-        min-height: 0;
-    }
+    .message { background-color: #1e293b; padding: 10px 14px; border-radius: 12px; max-width: 80%; width: fit-content; align-self: flex-start; }
+    .message.my-message { background-color: #312e81; border: 1px solid #4338ca; align-self: flex-end; }
+    .sender-other { font-size: 0.75rem; font-weight: bold; color: #818cf8; margin-bottom: 4px; display: block; }
+    .sender-me { font-size: 0.75rem; font-weight: bold; color: #facc15; margin-bottom: 4px; display: block; }
+    .message p { font-size: 0.9rem; line-height: 1.4; }
 
-    .chat-box {
-        flex: 1;
-        padding: 14px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        min-height: 0;
-    }
-
-    .system-msg {
-        text-align: center;
-        margin: 4px 0;
-    }
-
-    .system-msg span {
-        background-color: #151d2a;
+    /* شريط مؤشر الكتابة (Typing Indicator) فوق حقل الإدخال مباشرة */
+    .typing-indicator-bar {
+        padding: 4px 16px;
+        font-size: 0.75rem;
         color: #94a3b8;
-        font-size: 0.8rem;
-        padding: 6px 14px;
-        border-radius: 20px;
-        border: 1px solid #243044;
-        display: inline-block;
-        white-space: pre-line;
-    }
-
-    .message {
-        background-color: #1e293b;
-        padding: 10px 14px;
-        border-radius: 12px;
-        max-width: 80%;
-        width: fit-content;
-        align-self: flex-start;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-    .message.my-message {
-        background-color: #312e81;
-        border: 1px solid #4338ca;
-        align-self: flex-end;
-    }
-
-    .sender-other {
-        font-size: 0.75rem;
-        font-weight: bold;
-        color: #818cf8;
-        margin-bottom: 4px;
-        display: block;
-    }
-
-    .sender-me {
-        font-size: 0.75rem;
-        font-weight: bold;
-        color: #facc15;
-        margin-bottom: 4px;
-        display: block;
-    }
-
-    .message p {
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-
-    .chat-input-area {
-        padding: 10px 14px;
-        padding-bottom: max(10px, env(safe-area-inset-bottom));
         background-color: #151d2a;
-        border-top: 1px solid #243044;
-        display: flex;
-        gap: 10px;
-        flex-shrink: 0;
+        min-height: 20px;
+        font-style: italic;
     }
 
-    .chat-input-area input {
-        flex: 1;
-        background-color: #0b0f19;
-        border: 1px solid #334155;
-        border-radius: 10px;
-        padding: 10px 14px;
-        color: white;
-        font-size: 0.9rem;
-        outline: none;
-    }
+    .chat-input-area { padding: 10px 14px; background-color: #151d2a; border-top: 1px solid #243044; display: flex; gap: 10px; flex-shrink: 0; }
+    .chat-input-area input { flex: 1; background-color: #0b0f19; border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; color: white; font-size: 0.9rem; outline: none; }
+    .send-btn { background-color: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-    .chat-input-area input:disabled {
-        background-color: #1e293b;
-        cursor: not-allowed;
-    }
-
-    .send-btn {
-        background-color: #4f46e5;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 10px;
-        font-weight: bold;
-        font-size: 0.9rem;
-        cursor: pointer;
-    }
-
-    .send-btn:disabled {
-        background-color: #334155;
-        cursor: not-allowed;
-    }
-
-    /* النوافذ المنسدلة للأدوار في الليل */
-    .role-modal-overlay {
+    /* النوافذ المنسدلة */
+    .modal-overlay {
         position: fixed;
         inset: 0;
         background-color: rgba(11, 15, 25, 0.85);
@@ -398,7 +310,7 @@
         padding: 20px;
     }
 
-    .role-modal {
+    .modal-card {
         background-color: #151d2a;
         border: 1px solid #334155;
         border-radius: 16px;
@@ -409,39 +321,29 @@
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
-    .role-modal h3 {
-        color: #facc15;
-        font-size: 1.3rem;
-        margin-bottom: 10px;
-    }
+    .modal-card h3 { color: #facc15; font-size: 1.3rem; margin-bottom: 10px; }
+    .modal-card p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 16px; line-height: 1.5; }
 
-    .role-modal p {
-        color: #94a3b8;
-        font-size: 0.85rem;
-        margin-bottom: 16px;
-    }
+    .modal-options { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
+    .modal-opt-btn { background-color: #1e293b; border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
+    .close-btn { background-color: #475569; color: white; border: none; padding: 8px 16px; border-radius: 8px; margin-top: 12px; cursor: pointer; }
 
-    .modal-options {
+    .log-list {
+        text-align: right;
+        max-height: 220px;
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        max-height: 250px;
-        overflow-y: auto;
+        gap: 6px;
+        padding: 4px;
     }
-
-    .modal-opt-btn {
+    .log-item {
         background-color: #1e293b;
-        border: 1px solid #334155;
-        color: white;
-        padding: 10px;
+        padding: 8px 10px;
         border-radius: 8px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        transition: background-color 0.2s;
-    }
-
-    .modal-opt-btn:hover {
-        background-color: #334155;
+        font-size: 0.8rem;
+        border-right: 3px solid #3b82f6;
+        color: #cbd5e1;
     }
   </style>
 
@@ -451,14 +353,13 @@
 </head>
 <body>
 
+  <!-- شاشات الدخول -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
       <h2>لعبة المافيا</h2>
-      <p>أدخل اسمك ورمز الغرفة للانضمام أو أنشئ غرفة جديدة (4-12 لاعب)</p>
-      
+      <p>أدخل اسمك ورمز الغرفة للانضمام أو أنشئ غرفة جديدة</p>
       <input type="text" id="usernameInput" placeholder="اسمك في اللعبة..." maxlength="15">
       <input type="text" id="roomIdInput" placeholder="رمز الغرفة (مثل 4829)..." maxlength="6">
-      
       <div class="btn-group">
         <button class="btn-primary" id="joinBtn">انضمام لغرفة</button>
         <button class="btn-secondary" id="createBtn">إنشاء غرفة</button>
@@ -466,8 +367,36 @@
     </div>
   </div>
 
-  <div class="role-modal-overlay" id="roleModalOverlay">
-    <div class="role-modal">
+  <!-- شريط التنبيه السينمائي الانتقالي -->
+  <div class="phase-banner" id="phaseBanner">
+    <h2 id="bannerTitle">عنوان التنبيه</h2>
+    <p id="bannerDesc">وصف التنبيه...</p>
+  </div>
+
+  <!-- نافذة تفاصيل بطاقة الدور -->
+  <div class="modal-overlay" id="roleInfoModal">
+    <div class="modal-card">
+      <h3 id="roleInfoTitle">بطاقة الدور</h3>
+      <p id="roleInfoDesc">تفاصيل دورك والمطلوب منك خلال اللعبة...</p>
+      <button class="close-btn" id="closeRoleModalBtn">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- نافذة سجل الأحداث -->
+  <div class="modal-overlay" id="gameLogModal">
+    <div class="modal-card">
+      <h3>📜 سجل أحداث اللعبة</h3>
+      <p>قائمة بأهم الأحداث والقرارات التي حدثت في الجولات السابقة:</p>
+      <div class="log-list" id="gameLogList">
+        <div class="log-item">لا توجد أحداث مسجلة بعد...</div>
+      </div>
+      <button class="close-btn" id="closeLogModalBtn">إغلاق</button>
+    </div>
+  </div>
+
+  <!-- نافذة الخيارات الليلية -->
+  <div class="modal-overlay" id="roleModalOverlay">
+    <div class="modal-card">
       <h3 id="modalTitle">عنوان القرار</h3>
       <p id="modalDesc">تفاصيل القرار المطلوب...</p>
       <div class="modal-options" id="modalOptions"></div>
@@ -481,8 +410,9 @@
         <p id="roomCodeDisplay">الغرفة: ----</p>
       </div>
 
-      <div class="role-badge">
-        دورك: <span id="myRoleDisplay">في الانتظار</span>
+      <div class="header-actions">
+        <div class="log-badge" id="gameLogBtn" title="عرض سجل الأحداث">📜 السجل</div>
+        <div class="role-badge" id="roleBadgeBtn" title="انقر لعرض تفاصيل دورك">🎴 دورك: <span id="myRoleDisplay">في الانتظار</span></div>
       </div>
 
       <div class="status-badge">
@@ -499,10 +429,11 @@
 
     <main>
       <div class="chat-box" id="chatBox">
-        <div class="system-msg">
-          <span>مرحباً بك في لعبة المافيا!</span>
-        </div>
+        <div class="system-msg"><span>مرحباً بك في لعبة المافيا!</span></div>
       </div>
+
+      <!-- مؤشر الكتابة -->
+      <div class="typing-indicator-bar" id="typingIndicatorBar"></div>
 
       <form class="chat-input-area" id="chatForm">
         <input type="text" id="chatInput" placeholder="اكتب رسالتك..." autocomplete="off" required>
@@ -525,6 +456,32 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    const SoundEffects = {
+      playNightSound() { this.playTone(150, 0.8, 'sine'); },
+      playDaySound() {
+        this.playTone(580, 0.4, 'triangle');
+        setTimeout(() => this.playTone(870, 0.5, 'triangle'), 150);
+      },
+      playKillSound() { this.playTone(120, 0.6, 'sawtooth'); },
+      playTone(freq, duration, type) {
+        try {
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type || 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {
+          console.log("Audio not allowed yet");
+        }
+      }
+    };
+
     const loginOverlay = document.getElementById('loginOverlay');
     const usernameInput = document.getElementById('usernameInput');
     const roomIdInput = document.getElementById('roomIdInput');
@@ -542,10 +499,23 @@
     const phaseDisplay = document.getElementById('phaseDisplay');
     const timerDisplay = document.getElementById('timerDisplay');
     const myRoleDisplay = document.getElementById('myRoleDisplay');
+    const roleBadgeBtn = document.getElementById('roleBadgeBtn');
+    const roleInfoModal = document.getElementById('roleInfoModal');
+    const roleInfoTitle = document.getElementById('roleInfoTitle');
+    const roleInfoDesc = document.getElementById('roleInfoDesc');
+    const closeRoleModalBtn = document.getElementById('closeRoleModalBtn');
+    const gameLogBtn = document.getElementById('gameLogBtn');
+    const gameLogModal = document.getElementById('gameLogModal');
+    const gameLogList = document.getElementById('gameLogList');
+    const closeLogModalBtn = document.getElementById('closeLogModalBtn');
+    const phaseBanner = document.getElementById('phaseBanner');
+    const bannerTitle = document.getElementById('bannerTitle');
+    const bannerDesc = document.getElementById('bannerDesc');
     const roleModalOverlay = document.getElementById('roleModalOverlay');
     const modalTitle = document.getElementById('modalTitle');
     const modalDesc = document.getElementById('modalDesc');
     const modalOptions = document.getElementById('modalOptions');
+    const typingIndicatorBar = document.getElementById('typingIndicatorBar');
 
     let currentUsername = "";
     let currentRoomId = "";
@@ -557,6 +527,32 @@
     let isHost = false;
     let hasActedThisNight = false;
     let playersCache = {};
+    let typingTimeout = null;
+
+    const roleDescriptions = {
+      "مواطن": "🧑‍🌾 **أنت مواطن بريء**:\nمهمتك التحقيق والنقاش مع الجميع في النهار لاكتشاف المافيا والتصويت لإعدامهم.",
+      "مافيا": "🔪 **أنت من المافيا**:\nتجتمع سرّاً مع باقي أعضاء المافيا ليلاً لاغتيال أحد المواطنين دون كشف هويتكم.",
+      "طبيب": "💉 **أنت الطبيب**:\nتستطيع حماية شخص واحد كل ليلة (بمن فيهم نفسك) من اغتيالات المافيا.",
+      "محقق": "🔍 **أنت المحقق**:\nتستطيع التحقق من هوية لاعب واحد كل ليلة لمعرفة ما إذا كان ينتمي للمافيا أم لا.",
+      "في الانتظار": "⏳ **في الانتظار**:\nلم تبدأ اللعبة بعد. انتظر حتى يقوم المضيف ببدء اللعبة وتوزيع الأدوار."
+    };
+
+    roleBadgeBtn.addEventListener('click', () => {
+      roleInfoTitle.textContent = `دورك: ${myRole}`;
+      roleInfoDesc.innerText = roleDescriptions[myRole] || "لا يوجد وصف متاح لهذا الدور.";
+      roleInfoModal.style.display = 'flex';
+    });
+
+    closeRoleModalBtn.addEventListener('click', () => { roleInfoModal.style.display = 'none'; });
+    gameLogBtn.addEventListener('click', () => { gameLogModal.style.display = 'flex'; });
+    closeLogModalBtn.addEventListener('click', () => { gameLogModal.style.display = 'none'; });
+
+    function showPhaseBanner(title, desc) {
+      bannerTitle.textContent = title;
+      bannerDesc.textContent = desc;
+      phaseBanner.classList.add('show');
+      setTimeout(() => phaseBanner.classList.remove('show'), 3500);
+    }
 
     window.addEventListener('load', () => {
       const savedUser = localStorage.getItem('mafia_username');
@@ -587,10 +583,7 @@
 
     createBtn.addEventListener('click', () => {
       const name = usernameInput.value.trim();
-      if (!name) {
-        alert("يرجى إدخال اسمك أولاً!");
-        return;
-      }
+      if (!name) return alert("يرجى إدخال اسمك أولاً!");
       const newRoomCode = Math.floor(1000 + Math.random() * 9000).toString();
       joinOrCreateRoom(name, newRoomCode, true);
     });
@@ -598,12 +591,7 @@
     joinBtn.addEventListener('click', () => {
       const name = usernameInput.value.trim();
       const code = roomIdInput.value.trim();
-
-      if (!name || !code) {
-        alert("يرجى إدخال اسمك ورمز الغرفة!");
-        return;
-      }
-
+      if (!name || !code) return alert("يرجى إدخال اسمك ورمز الغرفة!");
       joinOrCreateRoom(name, code, false);
     });
 
@@ -612,17 +600,10 @@
       
       targetRoomRef.once('value', (snapshot) => {
         const roomData = snapshot.val();
+        if (!isCreating && !roomData) return alert("الغرفة غير موجودة!");
         
-        if (!isCreating && !roomData) {
-          alert("الغرفة غير موجودة! تحقق من الرمز.");
-          return;
-        }
-
         const players = roomData ? roomData.players : null;
-        if (players && Object.keys(players).length >= 12) {
-          alert("الغرفة ممتلئة بالكامل! الحد الأقصى هو 12 لاعباً.");
-          return;
-        }
+        if (players && Object.keys(players).length >= 12) return alert("الغرفة ممتلئة!");
 
         currentUsername = name;
         currentRoomId = roomCode;
@@ -636,12 +617,21 @@
           name: currentUsername,
           isAlive: true,
           votes: 0,
-          isHost: isFirstPlayer
+          isHost: isFirstPlayer,
+          online: true
         });
 
-        newPlayerRef.onDisconnect().remove().then(() => {
-          reassignHostIfNeeded(roomCode);
+        // إدارة حالة الاتصال (Firebase Presence)
+        const connectedRef = database.ref('.info/connected');
+        connectedRef.on('value', (snap) => {
+          if (snap.val() === true) {
+            const myPresenceRef = targetRoomRef.child(`players/${myPlayerKey}/online`);
+            myPresenceRef.onDisconnect().set(false);
+            myPresenceRef.set(true);
+          }
         });
+
+        newPlayerRef.onDisconnect().remove().then(() => reassignHostIfNeeded(roomCode));
 
         localStorage.setItem('mafia_username', currentUsername);
         localStorage.setItem('mafia_room_id', currentRoomId);
@@ -667,7 +657,6 @@
 
     function renderMessage(data, channelType) {
       const msgDiv = document.createElement('div');
-      
       if (data.isSystem) {
         msgDiv.className = 'system-msg';
         msgDiv.innerHTML = `<span>${data.text}</span>`;
@@ -694,30 +683,63 @@
       roomCodeDisplay.textContent = `الغرفة: #${roomId}`;
       chatBox.innerHTML = '<div class="system-msg"><span>انضممت إلى الغرفة #' + roomId + '</span></div>';
       
-      // استماع آمن لشات العامة
       roomRef.child('messages/public').off();
       roomRef.child('messages/public').on('child_added', (snap) => renderMessage(snap.val(), 'PUBLIC'));
 
-      // استماع آمن لشات المافيا
       roomRef.child('messages/mafia').off();
       roomRef.child('messages/mafia').on('child_added', (snap) => {
         if (myRole === "مافيا") renderMessage(snap.val(), 'MAFIA');
       });
 
-      // استماع آمن لشات الموتى
       roomRef.child('messages/ghosts').off();
       roomRef.child('messages/ghosts').on('child_added', (snap) => {
         if (!isAlive) renderMessage(snap.val(), 'GHOST');
       });
 
-      // استماع لدورك في مسار سري
+      roomRef.child('gameLogs').off();
+      roomRef.child('gameLogs').on('value', (snap) => {
+        const logs = snap.val();
+        gameLogList.innerHTML = '';
+        if (logs) {
+          Object.values(logs).forEach(logText => {
+            const item = document.createElement('div');
+            item.className = 'log-item';
+            item.textContent = logText;
+            gameLogList.appendChild(item);
+          });
+          gameLogList.scrollTop = gameLogList.scrollHeight;
+        } else {
+          gameLogList.innerHTML = '<div class="log-item">لا توجد أحداث مسجلة بعد...</div>';
+        }
+      });
+
+      // الاستماع لمؤشرات الكتابة في الغرفة
+      roomRef.child('typing').off();
+      roomRef.child('typing').on('value', (snap) => {
+        const typingData = snap.val() || {};
+        let typingNames = [];
+        
+        Object.keys(typingData).forEach(pKey => {
+          if (pKey !== myPlayerKey && typingData[pKey]) {
+            if (playersCache[pKey] && playersCache[pKey].name) {
+              typingNames.push(playersCache[pKey].name);
+            }
+          }
+        });
+
+        if (typingNames.length > 0) {
+          typingIndicatorBar.textContent = `✍️ ${typingNames.join('، ')} يكتب الآن...`;
+        } else {
+          typingIndicatorBar.textContent = '';
+        }
+      });
+
       roomRef.child(`secretRoles/${myPlayerKey}`).on('value', (snap) => {
         myRole = snap.val() || "في الانتظار";
         myRoleDisplay.textContent = myRole;
         updateChatPermissions();
       });
 
-      // استماع لتقرير المحقق الخاص السري
       roomRef.child(`investigations/${myPlayerKey}`).on('value', (snap) => {
         const result = snap.val();
         if (result && currentPhase === "day") {
@@ -737,6 +759,16 @@
 
         if (prevPhase !== currentPhase) {
           hasActedThisNight = false;
+          
+          if (currentPhase === "night") {
+            SoundEffects.playNightSound();
+            showPhaseBanner("🌙 حلّ الليل", "إغلاق العينين.. الأدوار السرية تنفذ مهامها الآن");
+          } else if (currentPhase === "day") {
+            SoundEffects.playDaySound();
+            showPhaseBanner("☀️ أشرقت الشمس", "استيقظ الجميع لنقاش أحداث الليلة الماضية");
+          } else if (currentPhase === "voting") {
+            showPhaseBanner("🗳️ بدء التصويت", "حان الوقت لاختيار من يتم إعدامه اليوم");
+          }
         }
 
         updateChatPermissions();
@@ -794,12 +826,28 @@
               }
             }
 
-            playerCard.innerHTML = `<span>${player.name} ${player.isHost ? '👑' : ''}</span> ${actionBtnHTML}`;
+            const isOnline = player.online !== false;
+            playerCard.innerHTML = `
+              <span class="status-dot ${isOnline ? 'online' : ''}" title="${isOnline ? 'متصل' : 'غير متصل'}"></span>
+              <span>${player.name} ${player.isHost ? '👑' : ''}</span> 
+              ${actionBtnHTML}
+            `;
             playersBar.appendChild(playerCard);
           });
         }
       });
     }
+
+    // إرسال مؤشر الكتابة عند الضغط على الحقل
+    chatInput.addEventListener('input', () => {
+      if (!roomRef || !myPlayerKey) return;
+      roomRef.child(`typing/${myPlayerKey}`).set(true);
+
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        roomRef.child(`typing/${myPlayerKey}`).remove();
+      }, 2000);
+    });
 
     function updateChatPermissions() {
       if (!isAlive) {
@@ -833,7 +881,7 @@
 
       if (myRole === "طبيب") {
         modalTitle.textContent = "💉 دور الطبيب";
-        modalDesc.textContent = "من تريد أن تحميه هذا الليل؟ (يمكنك حماية نفسك أو أي لاعب آخر)";
+        modalDesc.textContent = "من تريد أن تحميه هذا الليل؟";
         
         Object.keys(players).forEach(key => {
           if (players[key].isAlive) {
@@ -879,7 +927,7 @@
 
       } else if (myRole === "محقق") {
         modalTitle.textContent = "🔍 دور المحقق";
-        modalDesc.textContent = "اختر أحداً لتتحقق منه هل هو من المافيا أم لا؟ (باستثناء نفسك)";
+        modalDesc.textContent = "اختر أحداً لتتحقق منه هل هو من المافيا أم لا؟";
         
         database.ref(`rooms/${currentRoomId}/secretRoles`).once('value', (snap) => {
           const secretRoles = snap.val() || {};
@@ -913,10 +961,7 @@
       if (!isAlive || currentPhase !== "voting" || !roomRef || targetKey === myPlayerKey) return;
 
       roomRef.child(`hasVoted/${myPlayerKey}`).once('value', (snap) => {
-        if (snap.exists()) {
-          alert("لقد قمت بالتصويت بالفعل لهذا اليوم!");
-          return;
-        }
+        if (snap.exists()) return alert("لقد قمت بالتصويت بالفعل لهذا اليوم!");
 
         roomRef.child(`players/${targetKey}/votes`).transaction(v => (v || 0) + 1);
         roomRef.child(`hasVoted/${myPlayerKey}`).set(true);
@@ -928,6 +973,9 @@
       e.preventDefault();
       const text = chatInput.value.trim();
       if (!text || !currentUsername || !roomRef) return;
+
+      // مسح مؤشر الكتابة فور الإرسال
+      if (myPlayerKey) roomRef.child(`typing/${myPlayerKey}`).remove();
 
       let msgTarget = "messages/public";
       if (!isAlive) msgTarget = "messages/ghosts";
@@ -952,15 +1000,8 @@
         const playerKeys = Object.keys(players);
         const count = playerKeys.length;
 
-        if (count < 4) {
-          alert(`يحتاج 4 لاعبين على الأقل لبدء اللعبة! العدد الحالي: ${count}`);
-          return;
-        }
-
-        if (count > 12) {
-          alert("الحد الأقصى للعبة هو 12 لاعباً!");
-          return;
-        }
+        if (count < 4) return alert(`يحتاج 4 لاعبين على الأقل لبدء اللعبة! العدد الحالي: ${count}`);
+        if (count > 12) return alert("الحد الأقصى للعبة هو 12 لاعباً!");
 
         const shuffledKeys = playerKeys.sort(() => Math.random() - 0.5);
 
@@ -971,11 +1012,7 @@
           else if (index === (count >= 8 ? 2 : 1)) assignedRole = "محقق";
           else if (index === (count >= 8 ? 3 : 2)) assignedRole = "طبيب";
 
-          roomRef.child(`players/${key}`).update({
-            isAlive: true,
-            votes: 0
-          });
-
+          roomRef.child(`players/${key}`).update({ isAlive: true, votes: 0 });
           roomRef.child(`secretRoles/${key}`).set(assignedRole);
         });
 
@@ -983,65 +1020,56 @@
         roomRef.child('nightActions').remove();
         roomRef.child('investigations').remove();
         roomRef.child('hasVoted').remove();
+        roomRef.child('gameLogs').remove();
+        roomRef.child('typing').remove();
 
+        addGameLog("🎮 بدأت لعبة جديدة وتم توزيع الأدوار.");
         startPhase("night", 120, "🌙 بدأ الليل! المافيا تتفق، الطبيب يحمي، والمحقق يفحص...");
       });
     });
 
     resetGameBtn.addEventListener('click', () => {
       if (!roomRef || !isHost) return;
-      roomRef.update({
-        status: "waiting",
-        timer: 0
-      });
+      roomRef.update({ status: "waiting", timer: 0 });
       roomRef.child('nightActions').remove();
       roomRef.child('investigations').remove();
       roomRef.child('hasVoted').remove();
       roomRef.child('secretRoles').remove();
-      roomRef.child('messages/public').push({
-        text: "تم إعادة ضبط الغرفة من قبل المضيف.",
-        isSystem: true
-      });
+      roomRef.child('gameLogs').remove();
+      roomRef.child('typing').remove();
+      roomRef.child('messages/public').push({ text: "تم إعادة ضبط الغرفة من قبل المضيف.", isSystem: true });
     });
 
     leaveRoomBtn.addEventListener('click', () => {
       if (roomRef && myPlayerKey) {
-        roomRef.child(`players/${myPlayerKey}`).remove().then(() => {
-          reassignHostIfNeeded(currentRoomId);
-        });
+        roomRef.child(`players/${myPlayerKey}`).remove().then(() => reassignHostIfNeeded(currentRoomId));
       }
       clearLocalStorage();
       location.reload();
     });
 
+    function addGameLog(text) {
+      if (!roomRef) return;
+      roomRef.child('gameLogs').push(text);
+    }
+
     function startPhase(phaseName, duration, sysMessage) {
       if (!roomRef) return;
-      
-      roomRef.update({
-        status: phaseName,
-        timer: duration
-      });
-
-      roomRef.child('messages/public').push({
-        text: sysMessage,
-        isSystem: true
-      });
-
+      roomRef.update({ status: phaseName, timer: duration });
+      roomRef.child('messages/public').push({ text: sysMessage, isSystem: true });
       roomRef.child('hasVoted').remove();
+      roomRef.child('typing').remove();
 
       roomRef.child('players').once('value', (snapshot) => {
         const players = snapshot.val();
         if (players) {
-          Object.keys(players).forEach(key => {
-            roomRef.child(`players/${key}/votes`).set(0);
-          });
+          Object.keys(players).forEach(key => roomRef.child(`players/${key}/votes`).set(0));
         }
       });
     }
 
     setInterval(() => {
       if (!roomRef || !isHost) return;
-
       roomRef.child('timer').transaction((t) => (t > 0 ? t - 1 : 0), (err, committed, snap) => {
         if (committed && snap.val() === 0 && currentPhase !== "waiting") {
           handlePhaseTimeout();
@@ -1050,13 +1078,9 @@
     }, 1000);
 
     function handlePhaseTimeout() {
-      if (currentPhase === "night") {
-        resolveNightActions();
-      } else if (currentPhase === "day") {
-        startPhase("voting", 60, "🗳️ حان وقت التصويت! اختر من تشك بأنه مافيا.");
-      } else if (currentPhase === "voting") {
-        resolveVoting();
-      }
+      if (currentPhase === "night") resolveNightActions();
+      else if (currentPhase === "day") startPhase("voting", 60, "🗳️ حان وقت التصويت! اختر من تشك بأنه مافيا.");
+      else if (currentPhase === "voting") resolveVoting();
     }
 
     function checkWinConditions(players, secretRoles) {
@@ -1084,14 +1108,9 @@
     }
 
     function endGame(winMessage) {
-      roomRef.update({
-        status: "waiting",
-        timer: 0
-      });
-      roomRef.child('messages/public').push({
-        text: winMessage,
-        isSystem: true
-      });
+      roomRef.update({ status: "waiting", timer: 0 });
+      roomRef.child('messages/public').push({ text: winMessage, isSystem: true });
+      addGameLog(winMessage);
     }
 
     function resolveNightActions() {
@@ -1122,13 +1141,17 @@
         let daySummary = "☀️ أشرقت الشمس!\n";
 
         if (killedKey && killedKey !== healedKey) {
+          SoundEffects.playKillSound();
           roomRef.child(`players/${killedKey}`).update({ isAlive: false });
           daySummary += `❌ قامت المافيا باغتيال اللاعب: ${players[killedKey].name}.`;
+          addGameLog(`❌ تمت تصفية اللاعب (${players[killedKey].name}) ليلاً بواسطة المافيا.`);
           players[killedKey].isAlive = false;
         } else if (killedKey && killedKey === healedKey) {
           daySummary += `🛡️ حاولت المافيا الاغتيال، ولكن الطبيب قام بحماية الضحية بنجاح!`;
+          addGameLog(`🛡️ نجح الطبيب في إنقاذ وحماية الهدف من هجوم المافيا ليلاً.`);
         } else {
           daySummary += `✨ مرّت الليلة بسلام ولم يمت أحد.`;
+          addGameLog(`✨ مرّت الليلة بسلام ولم تحدث أي حالة وفاة.`);
         }
 
         if (checkWinConditions(players, secretRoles)) return;
@@ -1156,14 +1179,18 @@
         });
 
         if (victimKey) {
+          SoundEffects.playKillSound();
           roomRef.child(`players/${victimKey}`).update({ isAlive: false });
           players[victimKey].isAlive = false;
           
+          addGameLog(`🗳️ قرر الشعب إعدام اللاعب (${players[victimKey].name}) بأغلبية الأصوات.`);
+
           if (checkWinConditions(players, secretRoles)) return;
 
           startPhase("night", 120, `🗳️ قرر الشعب إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
         } else {
-          if (checkWinConditions(players, secretRoles)) return;
+          addGameLog(`🗳️ انتهى وقت التصويت دون اتفاق الشعب على إعدام أحد.`);
+          if (checkWinConditions.players, secretRoles) return;
 
           startPhase("night", 120, "🗳️ لم يتفق الجميع على إعدام أحد. حلّ الليل مجدداً...");
         }

@@ -345,7 +345,7 @@
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
       <h2>لعبة المافيا</h2>
-      <p>أدخل اسمك للانضمام إلى الغرفة</p>
+      <p>أدخل اسمك للانضمام إلى الغرفة (4-12 لاعب)</p>
       <input type="text" id="usernameInput" placeholder="اسمك باللعبة..." maxlength="15">
       <button id="joinBtn">انضمام للغرفة</button>
     </div>
@@ -369,7 +369,7 @@
     </header>
 
     <div class="players-bar" id="playersBar">
-      <button class="start-btn-sm" id="startGameBtn">بدء اللعبة (5+)</button>
+      <button class="start-btn-sm" id="startGameBtn">بدء اللعبة (4-12)</button>
       <button class="reset-btn-sm" id="resetGameBtn">إعادة ضبط</button>
     </div>
 
@@ -422,23 +422,31 @@
     let isAlive = true;
     let currentPhase = "waiting";
 
-    // الانضمام
+    // الانضمام مع فحص الحد الأقصى (12 لاعب)
     joinBtn.addEventListener('click', () => {
       const name = usernameInput.value.trim();
       if (name !== "") {
-        currentUsername = name;
-        const newPlayerRef = roomRef.child('players').push();
-        myPlayerKey = newPlayerRef.key;
+        roomRef.child('players').once('value', (snapshot) => {
+          const players = snapshot.val();
+          if (players && Object.keys(players).length >= 12) {
+            alert("الغرفة ممتلئة بالكامل! الحد الأقصى هو 12 لاعباً.");
+            return;
+          }
 
-        newPlayerRef.set({
-          name: currentUsername,
-          role: "مواطن",
-          isAlive: true,
-          votes: 0
+          currentUsername = name;
+          const newPlayerRef = roomRef.child('players').push();
+          myPlayerKey = newPlayerRef.key;
+
+          newPlayerRef.set({
+            name: currentUsername,
+            role: "مواطن",
+            isAlive: true,
+            votes: 0
+          });
+
+          newPlayerRef.onDisconnect().remove();
+          loginOverlay.style.display = 'none';
         });
-
-        newPlayerRef.onDisconnect().remove();
-        loginOverlay.style.display = 'none';
       }
     });
 
@@ -481,26 +489,36 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-    // بدء اللعبة (شرط 5 لاعبين أو أكثر)
+    // بدء اللعبة (شرط من 4 إلى 12 لاعب)
     startGameBtn.addEventListener('click', () => {
       roomRef.child('players').once('value', (snapshot) => {
         const players = snapshot.val();
         if (!players) return;
 
         const playerKeys = Object.keys(players);
-        if (playerKeys.length < 5) {
-          alert(`يحتاج 5 لاعبين على الأقل لبدء اللعبة! العدد الحالي: ${playerKeys.length}`);
+        const count = playerKeys.length;
+
+        if (count < 4) {
+          alert(`يحتاج 4 لاعبين على الأقل لبدء اللعبة! العدد الحالي: ${count}`);
+          return;
+        }
+
+        if (count > 12) {
+          alert("الحد الأقصى للعبة هو 12 لاعباً!");
           return;
         }
 
         const shuffledKeys = playerKeys.sort(() => Math.random() - 0.5);
 
-        // 1 مافيا، 1 محقق، 1 طبيب، والباقي مواطنين
+        // توزيع الأدوار تلقائياً حسَب عدد اللاعبين:
+        // 4-7 لاعبين: 1 مافيا، 1 محقق، 1 طبيب، والباقي مواطنين
+        // 8-12 لاعب: 2 مافيا، 1 محقق، 1 طبيب، والباقي مواطنين
         shuffledKeys.forEach((key, index) => {
           let assignedRole = "مواطن";
           if (index === 0) assignedRole = "مافيا";
-          else if (index === 1) assignedRole = "محقق";
-          else if (index === 2) assignedRole = "طبيب";
+          else if (index === 1 && count >= 8) assignedRole = "مافيا"; // مافيا ثاني للغرف الكبيرة
+          else if (index === (count >= 8 ? 2 : 1)) assignedRole = "محقق";
+          else if (index === (count >= 8 ? 3 : 2)) assignedRole = "طبيب";
 
           roomRef.child(`players/${key}`).update({
             role: assignedRole,
@@ -582,7 +600,7 @@
       chatInput.placeholder = enable ? "اكتب رسالتك..." : "الشات مغلق حالياً...";
     }
 
-    // متابعة اللاعبين والأزرار التفاضلية
+    // متابعة اللاعبين والأزرار
     roomRef.child('players').on('value', (snapshot) => {
       const players = snapshot.val();
       

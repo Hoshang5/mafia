@@ -257,6 +257,7 @@
     }
 
     .start-btn-sm { background-color: #16a34a; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; }
+    .skip-btn-sm { background-color: #d97706; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; }
     .reset-btn-sm { background-color: #475569; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; display: none; }
     .leave-btn-sm { background-color: #991b1b; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
 
@@ -377,7 +378,6 @@
     <p id="bannerDesc">وصف التنبيه...</p>
   </div>
 
-  <!-- مودال مخصص موحد بدلاً من رسائل المتصفح السادة -->
   <div class="modal-overlay" id="customAlertModal">
     <div class="modal-card">
       <h3 id="customAlertTitle">تنبيه</h3>
@@ -418,6 +418,7 @@
       <div class="room-info">
         <h1>المافيا</h1>
         <p id="roomCodeDisplay">الغرفة: ----</p>
+        <p id="roomHostDisplay" style="color: #facc15; font-weight: bold;">Host: ----</p>
       </div>
 
       <div class="header-actions">
@@ -433,6 +434,7 @@
 
     <div class="players-bar" id="playersBar">
       <button class="start-btn-sm" id="startGameBtn">بدء اللعبة (4-12)</button>
+      <button class="skip-btn-sm" id="skipPhaseBtn">تخطي الجولة ⏭️</button>
       <button class="reset-btn-sm" id="resetGameBtn">إعادة ضبط</button>
       <button class="leave-btn-sm" id="leaveRoomBtn">خروج</button>
     </div>
@@ -470,7 +472,6 @@
       console.error("فشل تسجيل الدخول المجهول:", error);
     });
 
-    // دالة عرض التنبيهات المخصصة بدلاً من alert()
     const customAlertModal = document.getElementById('customAlertModal');
     const customAlertTitle = document.getElementById('customAlertTitle');
     const customAlertDesc = document.getElementById('customAlertDesc');
@@ -518,12 +519,14 @@
     const joinBtn = document.getElementById('joinBtn');
     const createBtn = document.getElementById('createBtn');
     const roomCodeDisplay = document.getElementById('roomCodeDisplay');
+    const roomHostDisplay = document.getElementById('roomHostDisplay');
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const sendBtn = document.getElementById('sendBtn');
     const chatBox = document.getElementById('chatBox');
     const playersBar = document.getElementById('playersBar');
     const startGameBtn = document.getElementById('startGameBtn');
+    const skipPhaseBtn = document.getElementById('skipPhaseBtn');
     const resetGameBtn = document.getElementById('resetGameBtn');
     const leaveRoomBtn = document.getElementById('leaveRoomBtn');
     const phaseDisplay = document.getElementById('phaseDisplay');
@@ -642,7 +645,7 @@
         if (!isCreating && !roomData) return showAlert("الغرفة غير موجودة!");
         
         const players = roomData ? roomData.players : null;
-        if (players && Object.keys(players).length >= 12) return alert("الغرفة ممتلئة!"); // تم تحديثها ضمناً عبر الـ alert المخصص لو لزم
+        if (players && Object.keys(players).length >= 12) return showAlert("الغرفة ممتلئة!");
 
         currentUsername = name;
         currentRoomId = roomCode;
@@ -822,11 +825,22 @@
         const players = snapshot.val();
         playersCache = players || {};
         
+        let hostName = "----";
+        if (players) {
+          Object.keys(players).forEach(key => {
+            if (players[key].isHost) {
+              hostName = players[key].name;
+            }
+          });
+        }
+        roomHostDisplay.textContent = `Host: ${hostName}`;
+
         if (players && myPlayerKey && players[myPlayerKey]) {
           isAlive = players[myPlayerKey].isAlive;
           isHost = !!players[myPlayerKey].isHost;
           
           startGameBtn.style.display = isHost ? "inline-block" : "none";
+          skipPhaseBtn.style.display = (isHost && currentPhase !== "waiting") ? "inline-block" : "none";
           resetGameBtn.style.display = isHost ? "inline-block" : "none";
         }
 
@@ -1039,6 +1053,12 @@
       });
     });
 
+    // ميزة تخطي الجولة للهوست
+    skipPhaseBtn.addEventListener('click', () => {
+      if (!roomRef || !isHost) return;
+      handlePhaseTimeout();
+    });
+
     resetGameBtn.addEventListener('click', () => {
       if (!roomRef || !isHost) return;
       roomRef.update({ status: "waiting", timer: 0 });
@@ -1170,7 +1190,7 @@
     function resolveVoting() {
       roomRef.once('value', (snapshot) => {
         const data = snapshot.val();
-        const players = data ? data.players : (data ? data.players : null);
+        const players = data ? data.players : null;
         const secretRoles = data ? data.secretRoles : {};
         if (!players) return;
 

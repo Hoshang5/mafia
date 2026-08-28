@@ -965,7 +965,7 @@
           isHost = !!players[myPlayerKey].isHost;
           
           startGameBtn.style.display = isHost ? "inline-flex" : "none";
-          // التعديل هنا: زر تخطي الجولة يظهر للمضيف طالما أن الحالة ليست في وضع الانتظار
+          // تم جعل زر تخطي الجولة يظهر للمضيف طالما أن اللعبة ليست في وضع الانتظار
           skipPhaseBtn.style.display = (isHost && currentPhase !== "waiting") ? "inline-flex" : "none";
           resetGameBtn.style.display = isHost ? "inline-flex" : "none";
           hostVotingCloseContainer.style.display = isHost ? "block" : "none";

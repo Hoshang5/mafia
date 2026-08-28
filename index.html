@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>لعبة المافيا - Mafia Game</title>
+  <title>لعبة المافيا المحمية - Mafia Game</title>
   
   <style>
     * {
@@ -32,7 +32,6 @@
         position: relative;
     }
 
-    /* شاشات الدخول */
     .login-overlay {
         position: fixed;
         inset: 0;
@@ -101,7 +100,6 @@
     .btn-primary { background-color: #dc2626; }
     .btn-secondary { background-color: #2563eb; }
 
-    /* الشريط العلوي */
     header {
         background-color: #151d2a;
         padding: 8px 12px;
@@ -170,7 +168,6 @@
         font-family: monospace;
     }
 
-    /* شريط التنبيه السينمائي الانتقالي */
     .phase-banner {
         position: absolute;
         top: 40%;
@@ -205,7 +202,6 @@
         color: #cbd5e1;
     }
 
-    /* شريط التحكم واللاعبين */
     .players-bar {
         background-color: #0f172a;
         padding: 8px 12px;
@@ -264,7 +260,6 @@
     .reset-btn-sm { background-color: #475569; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; display: none; }
     .leave-btn-sm { background-color: #991b1b; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
 
-    /* الشات */
     main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; position: relative; }
     .chat-box { flex: 1; padding: 10px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
 
@@ -277,7 +272,6 @@
     .sender-me { font-size: 0.7rem; font-weight: bold; color: #facc15; margin-bottom: 2px; display: block; }
     .message p { font-size: 0.85rem; line-height: 1.35; word-break: break-word; }
 
-    /* شريط مؤشر الكتابة المصلح */
     .typing-indicator-bar {
         padding: 2px 12px;
         font-size: 0.7rem;
@@ -310,7 +304,6 @@
     }
     .send-btn { background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
 
-    /* النوافذ المنسدلة */
     .modal-overlay {
         position: fixed;
         inset: 0;
@@ -360,16 +353,15 @@
     }
   </style>
 
-  <!-- Firebase v8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 </head>
 <body>
 
-  <!-- شاشات الدخول -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-      <h2>لعبة المافيا</h2>
+      <h2>لعبة المافيا المحمية</h2>
       <p>أدخل اسمك ورمز الغرفة للانضمام أو أنشئ غرفة جديدة</p>
       <input type="text" id="usernameInput" placeholder="اسمك في اللعبة..." maxlength="15">
       <input type="text" id="roomIdInput" placeholder="رمز الغرفة (مثل 4829)..." maxlength="6">
@@ -380,13 +372,11 @@
     </div>
   </div>
 
-  <!-- شريط التنبيه السينمائي الانتقالي -->
   <div class="phase-banner" id="phaseBanner">
     <h2 id="bannerTitle">عنوان التنبيه</h2>
     <p id="bannerDesc">وصف التنبيه...</p>
   </div>
 
-  <!-- نافذة تفاصيل بطاقة الدور -->
   <div class="modal-overlay" id="roleInfoModal">
     <div class="modal-card">
       <h3 id="roleInfoTitle">بطاقة الدور</h3>
@@ -395,11 +385,10 @@
     </div>
   </div>
 
-  <!-- نافذة سجل الأحداث -->
   <div class="modal-overlay" id="gameLogModal">
     <div class="modal-card">
       <h3>📜 سجل أحداث اللعبة</h3>
-      <p>قائمة بأهم الأحداث والقرارات التي حدثت في الجولات السابقة:</p>
+      <p>قائمة بأهم الأحداث والقرارات:</p>
       <div class="log-list" id="gameLogList">
         <div class="log-item">لا توجد أحداث مسجلة بعد...</div>
       </div>
@@ -407,7 +396,6 @@
     </div>
   </div>
 
-  <!-- نافذة الخيارات الليلية -->
   <div class="modal-overlay" id="roleModalOverlay">
     <div class="modal-card">
       <h3 id="modalTitle">عنوان القرار</h3>
@@ -442,10 +430,9 @@
 
     <main>
       <div class="chat-box" id="chatBox">
-        <div class="system-msg"><span>مرحباً بك في لعبة المافيا!</span></div>
+        <div class="system-msg"><span>مرحباً بك في لعبة المافيا الآمنة!</span></div>
       </div>
 
-      <!-- مؤشر الكتابة -->
       <div class="typing-indicator-bar" id="typingIndicatorBar"></div>
 
       <form class="chat-input-area" id="chatForm">
@@ -468,6 +455,11 @@
 
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
+    const auth = firebase.auth();
+
+    auth.signInAnonymously().catch((error) => {
+      console.error("فشل تسجيل الدخول المجهول:", error);
+    });
 
     const SoundEffects = {
       playNightSound() { this.playTone(150, 0.8, 'sine'); },
@@ -543,16 +535,16 @@
     let typingTimeout = null;
 
     const roleDescriptions = {
-      "مواطن": "🧑‍🌾 **أنت مواطن بريء**:\nمهمتك التحقيق والنقاش مع الجميع في النهار لاكتشاف المافيا والتصويت لإعدامهم.",
-      "مافيا": "🔪 **أنت من المافيا**:\nتجتمع سرّاً مع باقي أعضاء المافيا ليلاً لاغتيال أحد المواطنين دون كشف هويتكم.",
-      "طبيب": "💉 **أنت الطبيب**:\nتستطيع حماية شخص واحد كل ليلة (بمن فيهم نفسك) من اغتيالات المافيا.",
-      "محقق": "🔍 **أنت المحقق**:\nتستطيع التحقق من هوية لاعب واحد كل ليلة لمعرفة ما إذا كان ينتمي للمافيا أم لا.",
-      "في الانتظار": "⏳ **في الانتظار**:\nلم تبدأ اللعبة بعد. انتظر حتى يقوم المضيف ببدء اللعبة وتوزيع الأدوار."
+      "مواطن": "🧑‍🌾 **أنت مواطن بريء**:\nمهمتك النقاش والتحقيق لاكتشاف المافيا والتصويت لإعدامهم.",
+      "مافيا": "🔪 **أنت من المافيا**:\nتجتمع سرّاً مع باقي أعضاء المافيا ليلاً لاغتيال أحد المواطنين.",
+      "طبيب": "💉 **أنت الطبيب**:\nتستطيع حماية شخص واحد كل ليلة من اغتيالات المافيا.",
+      "محقق": "🔍 **أنت المحقق**:\nتستطيع التحقق من هوية لاعب واحد كل ليلة لمعرفة ما إذا كان مافيا.",
+      "في الانتظار": "⏳ **في الانتظار**:\nلم تبدأ اللعبة بعد. انتظر حتى يبدأ المضيف اللعبة."
     };
 
     roleBadgeBtn.addEventListener('click', () => {
       roleInfoTitle.textContent = `دورك: ${myRole}`;
-      roleInfoDesc.innerText = roleDescriptions[myRole] || "لا يوجد وصف متاح لهذا الدور.";
+      roleInfoDesc.innerText = roleDescriptions[myRole] || "لا يوجد وصف متاح.";
       roleInfoModal.style.display = 'flex';
     });
 
@@ -621,36 +613,37 @@
         currentUsername = name;
         currentRoomId = roomCode;
 
-        const newPlayerRef = targetRoomRef.child('players').push();
-        myPlayerKey = newPlayerRef.key;
+        auth.onAuthStateChanged((user) => {
+          myPlayerKey = user ? user.uid : targetRoomRef.child('players').push().key;
 
-        const isFirstPlayer = !players || Object.keys(players).length === 0;
+          const newPlayerRef = targetRoomRef.child(`players/${myPlayerKey}`);
+          const isFirstPlayer = !players || Object.keys(players).length === 0;
 
-        newPlayerRef.set({
-          name: currentUsername,
-          isAlive: true,
-          votes: 0,
-          isHost: isFirstPlayer,
-          online: true
+          newPlayerRef.set({
+            name: currentUsername,
+            isAlive: true,
+            votes: 0,
+            isHost: isFirstPlayer,
+            online: true
+          });
+
+          database.ref('.info/connected').on('value', (snap) => {
+            if (snap.val() === true) {
+              const myPresenceRef = targetRoomRef.child(`players/${myPlayerKey}/online`);
+              myPresenceRef.onDisconnect().set(false);
+              myPresenceRef.set(true);
+            }
+          });
+
+          newPlayerRef.onDisconnect().remove().then(() => reassignHostIfNeeded(roomCode));
+
+          localStorage.setItem('mafia_username', currentUsername);
+          localStorage.setItem('mafia_room_id', currentRoomId);
+          localStorage.setItem('mafia_player_key', myPlayerKey);
+
+          loginOverlay.style.display = 'none';
+          setupRoomListeners(currentRoomId);
         });
-
-        const connectedRef = database.ref('.info/connected');
-        connectedRef.on('value', (snap) => {
-          if (snap.val() === true) {
-            const myPresenceRef = targetRoomRef.child(`players/${myPlayerKey}/online`);
-            myPresenceRef.onDisconnect().set(false);
-            myPresenceRef.set(true);
-          }
-        });
-
-        newPlayerRef.onDisconnect().remove().then(() => reassignHostIfNeeded(roomCode));
-
-        localStorage.setItem('mafia_username', currentUsername);
-        localStorage.setItem('mafia_room_id', currentRoomId);
-        localStorage.setItem('mafia_player_key', myPlayerKey);
-
-        loginOverlay.style.display = 'none';
-        setupRoomListeners(currentRoomId);
       });
     }
 
@@ -731,32 +724,6 @@
         }
       });
 
-      roomRef.child('typing').off();
-      roomRef.child('typing').on('value', (snap) => {
-        const typingData = snap.val() || {};
-        let typingNames = [];
-        
-        Object.keys(typingData).forEach(pKey => {
-          if (pKey !== myPlayerKey && typingData[pKey]) {
-            if (currentPhase === "night") {
-              if (myRole === "مافيا" && playersCache[pKey] && secretRolesCache[pKey] === "مافيا") {
-                typingNames.push(playersCache[pKey].name);
-              }
-            } else {
-              if (playersCache[pKey] && playersCache[pKey].name) {
-                typingNames.push(playersCache[pKey].name);
-              }
-            }
-          }
-        });
-
-        if (typingNames.length > 0) {
-          typingIndicatorBar.textContent = `✍️ ${typingNames.join('، ')} يكتب الآن...`;
-        } else {
-          typingIndicatorBar.textContent = '';
-        }
-      });
-
       roomRef.child(`secretRoles/${myPlayerKey}`).on('value', (snap) => {
         myRole = snap.val() || "في الانتظار";
         myRoleDisplay.textContent = myRole;
@@ -766,7 +733,7 @@
       roomRef.child(`investigations/${myPlayerKey}`).on('value', (snap) => {
         const result = snap.val();
         if (result && currentPhase === "day") {
-          const statusText = result.isMafia ? "⚠️ ينتمي للمافيا!" : "✅ بريء (مواطن)";
+          const statusText = result.isMafia ? "⚠️ ينتمي للمافيا!" : "✅ بريء";
           alert(`🔍 تقرير المحقق السرّي:\nاللاعب (${result.targetName}) هو: ${statusText}`);
           roomRef.child(`investigations/${myPlayerKey}`).remove();
         }
@@ -785,12 +752,12 @@
           
           if (currentPhase === "night") {
             SoundEffects.playNightSound();
-            showPhaseBanner("🌙 حلّ الليل", "إغلاق العينين.. الأدوار السرية تنفذ مهامها الآن");
+            showPhaseBanner("🌙 حلّ الليل", "الأدوار السرية تنفذ مهامها الآن");
           } else if (currentPhase === "day") {
             SoundEffects.playDaySound();
-            showPhaseBanner("☀️ أشرقت الشمس", "استيقظ الجميع لنقاش أحداث الليلة الماضية");
+            showPhaseBanner("☀️ أشرقت الشمس", "استيقظ الجميع للنقاش");
           } else if (currentPhase === "voting") {
-            showPhaseBanner("🗳️ بدء التصويت", "حان الوقت لاختيار من يتم إعدامه اليوم");
+            showPhaseBanner("🗳️ بدء التصويت", "حان وقت اختيار من يتم إعدامه");
           }
         }
 
@@ -851,7 +818,7 @@
 
             const isOnline = player.online !== false;
             playerCard.innerHTML = `
-              <span class="status-dot ${isOnline ? 'online' : ''}" title="${isOnline ? 'متصل' : 'غير متصل'}"></span>
+              <span class="status-dot ${isOnline ? 'online' : ''}"></span>
               <span>${player.name} ${player.isHost ? '👑' : ''}</span> 
               ${actionBtnHTML}
             `;
@@ -861,17 +828,11 @@
       });
     }
 
-    let secretRolesCache = {};
-    roomRef && roomRef.child('secretRoles').on('value', (snap) => {
-      secretRolesCache = snap.val() || {};
-    });
-
     chatInput.addEventListener('input', () => {
       if (!roomRef || !myPlayerKey) return;
       if (currentPhase === "night" && myRole !== "مافيا" && isAlive) return;
       
       roomRef.child(`typing/${myPlayerKey}`).set(true);
-
       clearTimeout(typingTimeout);
       typingTimeout = setTimeout(() => {
         roomRef.child(`typing/${myPlayerKey}`).remove();
@@ -916,7 +877,7 @@
           if (players[key].isAlive) {
             const btn = document.createElement('button');
             btn.className = 'modal-opt-btn';
-            btn.textContent = players[key].name + (key === myPlayerKey ? " (أنت)" : "");
+            btn.textContent = players[key].name;
             btn.onclick = () => {
               roomRef.child('nightActions/healed').set(key);
               hasActedThisNight = true;
@@ -932,57 +893,47 @@
         modalTitle.textContent = "🔪 دور القاتل (المافيا)";
         modalDesc.textContent = "من تريد إعدامه الليلة؟";
         
-        database.ref(`rooms/${currentRoomId}/secretRoles`).once('value', (snap) => {
-          const secretRoles = snap.val() || {};
-          let availableTargets = 0;
-          
-          Object.keys(players).forEach(key => {
-            if (players[key].isAlive && secretRoles[key] !== "مافيا") {
-              availableTargets++;
-              const btn = document.createElement('button');
-              btn.className = 'modal-opt-btn';
-              btn.textContent = players[key].name;
-              btn.onclick = () => {
-                roomRef.child(`nightActions/mafiaVotes/${myPlayerKey}`).set(key);
-                hasActedThisNight = true;
-                roleModalOverlay.style.display = 'none';
-                alert("اخترت التخلص من: " + players[key].name);
-              };
-              modalOptions.appendChild(btn);
-            }
-          });
-          if (availableTargets > 0) roleModalOverlay.style.display = 'flex';
+        Object.keys(players).forEach(key => {
+          if (players[key].isAlive) {
+            const btn = document.createElement('button');
+            btn.className = 'modal-opt-btn';
+            btn.textContent = players[key].name;
+            btn.onclick = () => {
+              roomRef.child(`nightActions/mafiaVotes/${myPlayerKey}`).set(key);
+              hasActedThisNight = true;
+              roleModalOverlay.style.display = 'none';
+              alert("اخترت الهدف.");
+            };
+            modalOptions.appendChild(btn);
+          }
         });
+        roleModalOverlay.style.display = 'flex';
 
       } else if (myRole === "محقق") {
         modalTitle.textContent = "🔍 دور المحقق";
-        modalDesc.textContent = "اختر أحداً لتتحقق منه هل هو من المافيا أم لا؟";
+        modalDesc.textContent = "اختر أحداً لتتحقق منه:";
         
-        database.ref(`rooms/${currentRoomId}/secretRoles`).once('value', (snap) => {
-          const secretRoles = snap.val() || {};
-          
-          Object.keys(players).forEach(key => {
-            if (players[key].isAlive && key !== myPlayerKey) {
-              const btn = document.createElement('button');
-              btn.className = 'modal-opt-btn';
-              btn.textContent = players[key].name;
-              btn.onclick = () => {
-                const isTargetMafia = (secretRoles[key] === "مافيا");
+        Object.keys(players).forEach(key => {
+          if (players[key].isAlive && key !== myPlayerKey) {
+            const btn = document.createElement('button');
+            btn.className = 'modal-opt-btn';
+            btn.textContent = players[key].name;
+            btn.onclick = () => {
+              roomRef.child(`secretRoles/${key}`).once('value', (roleSnap) => {
+                const targetIsMafia = (roleSnap.val() === "مافيا");
                 roomRef.child(`investigations/${myPlayerKey}`).set({
                   targetName: players[key].name,
-                  isMafia: isTargetMafia
+                  isMafia: targetIsMafia
                 });
                 hasActedThisNight = true;
                 roleModalOverlay.style.display = 'none';
-                alert("تم الفحص! ستصلك النتيجة السرية بحلول النهار.");
-              };
-              modalOptions.appendChild(btn);
-            }
-          });
-          roleModalOverlay.style.display = 'flex';
+                alert("تم الفحص بنجاح!");
+              });
+            };
+            modalOptions.appendChild(btn);
+          }
         });
-      } else {
-        roleModalOverlay.style.display = 'none';
+        roleModalOverlay.style.display = 'flex';
       }
     }
 
@@ -990,11 +941,11 @@
       if (!isAlive || currentPhase !== "voting" || !roomRef || targetKey === myPlayerKey) return;
 
       roomRef.child(`hasVoted/${myPlayerKey}`).once('value', (snap) => {
-        if (snap.exists()) return alert("لقد قمت بالتصويت بالفعل لهذا اليوم!");
+        if (snap.exists()) return alert("لقد قمت بالتصويت مسبقاً!");
 
         roomRef.child(`players/${targetKey}/votes`).transaction(v => (v || 0) + 1);
         roomRef.child(`hasVoted/${myPlayerKey}`).set(true);
-        alert("تم تسجيل تصويتك بنجاح!");
+        alert("تم تسجيل صوتك بنجاح!");
       });
     };
 
@@ -1008,7 +959,7 @@
       let msgTarget = "messages/public";
       if (!isAlive) msgTarget = "messages/ghosts";
       else if (currentPhase === "night" && myRole === "مافيا") msgTarget = "messages/mafia";
-      else if (currentPhase === "night" && myRole !== "مافيا") return;
+      else if (currentPhase === "night") return;
 
       roomRef.child(msgTarget).push({
         sender: currentUsername,
@@ -1018,6 +969,7 @@
       chatInput.value = "";
     });
 
+    // تعديل بدء اللعبة محلياً بواسطة المضيف (مجاني تماماً بدون Cloud Functions)
     startGameBtn.addEventListener('click', () => {
       if (!roomRef || !isHost) return;
       
@@ -1028,10 +980,10 @@
         const playerKeys = Object.keys(players);
         const count = playerKeys.length;
 
-        if (count < 4) return alert(`يحتاج 4 لاعبين على الأقل لبدء اللعبة! العدد الحالي: ${count}`);
-        if (count > 12) return alert("الحد الأقصى للعبة هو 12 لاعباً!");
+        if (count < 4) return alert("يحتاج 4 لاعبين على الأقل!");
 
         const shuffledKeys = playerKeys.sort(() => Math.random() - 0.5);
+        const rolesMap = {};
 
         shuffledKeys.forEach((key, index) => {
           let assignedRole = "مواطن";
@@ -1040,19 +992,19 @@
           else if (index === (count >= 8 ? 2 : 1)) assignedRole = "محقق";
           else if (index === (count >= 8 ? 3 : 2)) assignedRole = "طبيب";
 
+          rolesMap[key] = assignedRole;
           roomRef.child(`players/${key}`).update({ isAlive: true, votes: 0 });
-          roomRef.child(`secretRoles/${key}`).set(assignedRole);
         });
 
+        roomRef.child('secretRoles').set(rolesMap);
         roomRef.child('messages').remove();
         roomRef.child('nightActions').remove();
         roomRef.child('investigations').remove();
         roomRef.child('hasVoted').remove();
         roomRef.child('gameLogs').remove();
-        roomRef.child('typing').remove();
 
-        addGameLog("🎮 بدأت لعبة جديدة وتم توزيع الأدوار.");
-        startPhase("night", 120, "🌙 بدأ الليل! المافيا تتفق، الطبيب يحمي، والمحقق يفحص...");
+        addGameLog("🎮 بدأت لعبة جديدة.");
+        startPhase("night", 120, "🌙 بدأ الليل!");
       });
     });
 
@@ -1064,8 +1016,6 @@
       roomRef.child('hasVoted').remove();
       roomRef.child('secretRoles').remove();
       roomRef.child('gameLogs').remove();
-      roomRef.child('typing').remove();
-      roomRef.child('messages/public').push({ text: "تم إعادة ضبط الغرفة من قبل المضيف.", isSystem: true });
     });
 
     leaveRoomBtn.addEventListener('click', () => {
@@ -1086,7 +1036,6 @@
       roomRef.update({ status: phaseName, timer: duration });
       roomRef.child('messages/public').push({ text: sysMessage, isSystem: true });
       roomRef.child('hasVoted').remove();
-      roomRef.child('typing').remove();
 
       roomRef.child('players').once('value', (snapshot) => {
         const players = snapshot.val();
@@ -1106,14 +1055,13 @@
     }, 1000);
 
     function handlePhaseTimeout() {
+      if (!isHost) return;
       if (currentPhase === "night") resolveNightActions();
-      else if (currentPhase === "day") startPhase("voting", 60, "🗳️ حان وقت التصويت! اختر من تشك بأنه مافيا.");
+      else if (currentPhase === "day") startPhase("voting", 60, "🗳️ حان وقت التصويت!");
       else if (currentPhase === "voting") resolveVoting();
     }
 
     function checkWinConditions(players, secretRoles) {
-      if (!players || !secretRoles || currentPhase === "waiting") return false;
-
       let aliveMafia = 0;
       let aliveCitizens = 0;
 
@@ -1125,13 +1073,12 @@
       });
 
       if (aliveMafia === 0) {
-        endGame("🎉 فاز المواطنون! تم القضاء على جميع أعضاء المافيا!");
+        endGame("🎉 فاز المواطنون!");
         return true;
       } else if (aliveMafia >= aliveCitizens) {
-        endGame("🔪 فازت المافيا! أصبحت أعداد المافيا تسيطر على المدينة!");
+        endGame("🔪 فازت المافيا!");
         return true;
       }
-
       return false;
     }
 
@@ -1171,15 +1118,15 @@
         if (killedKey && killedKey !== healedKey) {
           SoundEffects.playKillSound();
           roomRef.child(`players/${killedKey}`).update({ isAlive: false });
-          daySummary += `❌ قامت المافيا باغتيال اللاعب: ${players[killedKey].name}.`;
-          addGameLog(`❌ تمت تصفية اللاعب (${players[killedKey].name}) ليلاً بواسطة المافيا.`);
+          daySummary += `❌ اغتالت المافيا اللاعب: ${players[killedKey].name}.`;
+          addGameLog(`❌ تمت تصفية اللاعب (${players[killedKey].name}) ليلاً.`);
           players[killedKey].isAlive = false;
         } else if (killedKey && killedKey === healedKey) {
-          daySummary += `🛡️ حاولت المافيا الاغتيال، ولكن الطبيب قام بحماية الضحية بنجاح!`;
-          addGameLog(`🛡️ نجح الطبيب في إنقاذ وحماية الهدف من هجوم المافيا ليلاً.`);
+          daySummary += `🛡️ أنقذ الطبيب الهدف بنجاح!`;
+          addGameLog(`🛡️ نجح الطبيب في الإنقاذ.`);
         } else {
-          daySummary += `✨ مرّت الليلة بسلام ولم يمت أحد.`;
-          addGameLog(`✨ مرّت الليلة بسلام ولم تحدث أي حالة وفاة.`);
+          daySummary += `✨ مرّت الليلة بسلام.`;
+          addGameLog(`✨ مرّت الليلة بسلام.`);
         }
 
         if (checkWinConditions(players, secretRoles)) return;
@@ -1211,16 +1158,15 @@
           roomRef.child(`players/${victimKey}`).update({ isAlive: false });
           players[victimKey].isAlive = false;
           
-          addGameLog(`🗳️ قرر الشعب إعدام اللاعب (${players[victimKey].name}) بأغلبية الأصوات.`);
-
+          addGameLog(`🗳️ تم إعدام اللاعب (${players[victimKey].name}).`);
           if (checkWinConditions(players, secretRoles)) return;
 
-          startPhase("night", 120, `🗳️ قرر الشعب إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
+          startPhase("night", 120, `🗳️ تم إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
         } else {
-          addGameLog(`🗳️ انتهى وقت التصويت دون اتفاق الشعب على إعدام أحد.`);
+          addGameLog(`🗳️ لم يتم إعدام أحد لتعادل الأصوات.`);
           if (checkWinConditions(players, secretRoles)) return;
 
-          startPhase("night", 120, "🗳️ لم يتفق الجميع على إعدام أحد. حلّ الليل مجدداً...");
+          startPhase("night", 120, "🗳️ لم يتفق أحد. حلّ الليل مجدداً...");
         }
       });
     }

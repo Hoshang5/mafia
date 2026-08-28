@@ -301,7 +301,7 @@
 
     .message { background-color: var(--bg-message); padding: 8px 12px; border-radius: 10px; max-width: 85%; width: fit-content; align-self: flex-start; color: var(--text-main); }
     .message.my-message { background-color: #312e81; border: 1px solid #4338ca; align-self: flex-end; color: #ffffff; }
-    .sender-other { font-size: 0.7rem; font-weight: bold; color: #818cf8; margin-bottom: 2px; display: block; }
+    .sender-other { font-size: 0.7rem; font-weight: bold; margin-bottom: 2px; display: block; }
     .sender-me { font-size: 0.7rem; font-weight: bold; color: #facc15; margin-bottom: 2px; display: block; }
     .message p { font-size: 0.85rem; line-height: 1.35; word-break: break-word; }
 
@@ -655,6 +655,22 @@
     let currentRoundNumber = 1;
     let typingTimeout = null;
 
+    // دالة لتوليد لون مميز وثابت لكل اسم مستخدم
+    function getUserColor(username, isHostPlayer) {
+      if (isHostPlayer) return '#facc15'; // Host لون أصفر دائماً
+      let hash = 0;
+      for (let i = 0; i < username.length; i++) {
+        hash = username.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+      let color = '#' + ('00000'.substring(0, 6 - c.length) + c);
+      // التأكد من ألا يكون اللون قريباً جداً من الأسود ليظل واضحاً
+      if (color === '#000000' || color === '#0B0F19' || color === '#1E293B') {
+        color = '#38bdf8';
+      }
+      return color;
+    }
+
     const roleDescriptions = {
       "مواطن": "<i class='fa-solid fa-user'></i> **أنت مواطن بريء**:\nمهمتك النقاش والتحقيق لاكتشاف المافيا والتصويت لإعدامهم.",
       "مافيا": "<i class='fa-solid fa-skull'></i> **أنت من المافيا**:\nتجتمع سرّاً مع باقي أعضاء المافيا ليلاً لاغتيال أحد المواطنين.",
@@ -815,7 +831,8 @@
         if (channelType === "GHOST") badge = " <i class='fa-solid fa-ghost'></i> [ميّت]";
         if (channelType === "MAFIA") badge = " <i class='fa-solid fa-skull'></i> [مافيا]";
 
-        msgDiv.innerHTML = `<span class="${isMe ? 'sender-me' : 'sender-other'}">${data.sender}${badge}</span><p>${data.text}</p>`;
+        const senderColor = getUserColor(data.sender, false);
+        msgDiv.innerHTML = `<span class="${isMe ? 'sender-me' : 'sender-other'}" style="${!isMe ? 'color:' + senderColor : ''}">${data.sender}${badge}</span><p>${data.text}</p>`;
       }
 
       chatBox.appendChild(msgDiv);
@@ -854,6 +871,7 @@
             SoundEffects.playDaySound();
             showPhaseBanner("أشرقت الشمس", "استيقظ الجميع للنقاش");
             votingModalOverlay.style.display = 'none';
+            checkAndShowInvestigateResultForDetective();
           } else if (currentPhase === "voting") {
             showPhaseBanner("بدء التصويت", "حان وقت اختيار من يتم إعدامه");
             if (isAlive) {
@@ -931,15 +949,6 @@
         updateChatPermissions();
       });
 
-      roomRef.child(`investigations/${myPlayerKey}`).on('value', (snap) => {
-        const result = snap.val();
-        if (result && currentPhase === "day") {
-          const statusText = result.isMafia ? "ينتمي للمافيا!" : "بريء";
-          showAlert(`تقييم المحقق السرّي:\nاللاعب (${result.targetName}) هو: ${statusText}`, "نتيجة التحقيق");
-          roomRef.child(`investigations/${myPlayerKey}`).remove();
-        }
-      });
-
       roomRef.child('votingData').on('value', (snap) => {
         if (currentPhase === "voting") {
           renderVotingModalContent();
@@ -965,7 +974,6 @@
           isHost = !!players[myPlayerKey].isHost;
           
           startGameBtn.style.display = isHost ? "inline-flex" : "none";
-          // التعديل هنا: زر تخطي الجولة يظهر للمضيف دائماً طالما أن المضيف موجود في الغرفة بغض النظر عن حالة الجولة
           skipPhaseBtn.style.display = isHost ? "inline-flex" : "none";
           resetGameBtn.style.display = isHost ? "inline-flex" : "none";
           hostVotingCloseContainer.style.display = isHost ? "block" : "none";
@@ -989,9 +997,11 @@
               kickBtnHTML = `<button class="kick-btn-sm" onclick="kickPlayer('${key}')"><i class="fa-solid fa-user-xmark"></i> طرد</button>`;
             }
 
+            const nameColor = getUserColor(player.name, player.isHost);
+
             playerCard.innerHTML = `
               <span class="status-dot ${isOnline ? 'online' : ''}"></span>
-              <span>${player.name} ${player.isHost ? '<i class="fa-solid fa-crown" style="color:#facc15;"></i>' : ''}</span>
+              <span style="color: ${nameColor}; font-weight: bold;">${player.name} ${player.isHost ? '<i class="fa-solid fa-crown" style="color:#facc15;"></i>' : ''}</span>
               ${kickBtnHTML}
             `;
             playersBar.appendChild(playerCard);
@@ -1000,6 +1010,18 @@
         
         if (currentPhase === "voting" && votingModalOverlay.style.display === 'flex') {
           renderVotingModalContent();
+        }
+      });
+    }
+
+    function checkAndShowInvestigateResultForDetective() {
+      if (myRole !== "محقق" || !isAlive) return;
+      roomRef.child(`investigations/${myPlayerKey}`).once('value', (snap) => {
+        const result = snap.val();
+        if (result) {
+          const statusText = result.isMafia ? "ينتمي للمافيا! ⚠️" : "بريء ✅";
+          showAlert(`نتیجة التحقيق السرّي ليلاً:\nاللاعب (${result.targetName}) هو: ${statusText}`, "المحقق السرّي");
+          roomRef.child(`investigations/${myPlayerKey}`).remove();
         }
       });
     }
@@ -1045,7 +1067,7 @@
     }
 
     function checkAndShowNightModal(players) {
-      if (!isAlive || hasActedThisNight || !players || currentRoundNumber === 1) {
+      if (!isAlive || hasActedThisNight || !players) {
         roleModalOverlay.style.display = 'none';
         return;
       }
@@ -1074,10 +1096,10 @@
 
       } else if (myRole === "مافيا") {
         modalTitle.innerHTML = `<i class="fa-solid fa-skull"></i> دور القاتل (المافيا)`;
-        modalDesc.textContent = "من تريد إعدامه الليلة؟";
+        modalDesc.textContent = "من تريد إعدامه الليلة؟ (لا يمكنك قتل نفسك)";
         
         Object.keys(players).forEach(key => {
-          if (players[key].isAlive) {
+          if (players[key].isAlive && key !== myPlayerKey) {
             const btn = document.createElement('button');
             btn.className = 'modal-opt-btn';
             btn.textContent = players[key].name;
@@ -1094,7 +1116,7 @@
 
       } else if (myRole === "محقق") {
         modalTitle.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> دور المحقق`;
-        modalDesc.textContent = "اختر أحداً لتتحقق منه:";
+        modalDesc.textContent = "اختر أحداً لتتحقق منه (ستظهر النتيجة عند بزوغ النهار):";
         
         Object.keys(players).forEach(key => {
           if (players[key].isAlive && key !== myPlayerKey) {
@@ -1110,7 +1132,7 @@
                 });
                 hasActedThisNight = true;
                 roleModalOverlay.style.display = 'none';
-                showAlert("تم الفحص بنجاح!", "المحقق");
+                showAlert("تم الفحص بنجاح! انتظر بزوغ النهار لمعرفة النتيجة.", "المحقق");
               });
             };
             modalOptions.appendChild(btn);
@@ -1244,8 +1266,9 @@
         roomRef.child('gameLogs').remove();
         roomRef.update({ roundNumber: 1 });
 
-        addGameLog("بدأت لعبة جديدة (الجولة الأولى).");
-        startPhase("night", 120, "بدء الليل الأول (هدنة مؤقتة: لا يمكن للمافيا القتل أو الحماية أو التحقيق).");
+        addGameLog("بدأت لعبة جديدة.");
+        // التسلسل المطلوب: بداية اللعبة تكون نهار (180 ثانية)
+        startPhase("day", 180, "أشرقت الشمس في اليوم الأول! استيقظ الجميع للنقاش.");
       });
     });
 
@@ -1307,14 +1330,16 @@
       });
     }, 1000);
 
+    // تحديث تسلسل المراحل بالترتيب الدقيق: نهار -> تصويت -> ليل -> تكرار (نهار -> تصويت -> ليل)
     function handlePhaseTimeout() {
       if (!isHost) return;
-      if (currentPhase === "night") {
-        resolveNightActions();
-      } else if (currentPhase === "day") {
-        startPhase("voting", 0, "حان وقت التصويت! اختر من هو المافيا.");
+      if (currentPhase === "day") {
+        // بعد النهار يأتي التصويت
+        startPhase("voting", 90, "انتهى وقت النقاش! حان وقت التصويت.");
       } else if (currentPhase === "voting") {
         resolveVoting();
+      } else if (currentPhase === "night") {
+        resolveNightActions();
       }
     }
 
@@ -1346,6 +1371,7 @@
       votingModalOverlay.style.display = 'none';
     }
 
+    // بعد الليل يأتي النهار مباشرة (وليس التصويت)
     function resolveNightActions() {
       roomRef.once('value', (snapshot) => {
         const data = snapshot.val();
@@ -1355,52 +1381,49 @@
 
         if (!players) return;
 
-        let daySummary = "أشرقت الشمس!\n";
+        let summaryMsg = "أشرقت الشمس!\n";
+        let killedKey = null;
 
-        if (currentRoundNumber === 1) {
-          daySummary += `مرت الجولة الأولى بسلام (لا قتل ولا حماية).`;
-          addGameLog(`مرت الجولة الأولى بسلام.`);
+        if (nightActions && nightActions.mafiaVotes) {
+          const voteCounts = {};
+          Object.values(nightActions.mafiaVotes).forEach(target => {
+            voteCounts[target] = (voteCounts[target] || 0) + 1;
+          });
+          let maxV = 0;
+          Object.keys(voteCounts).forEach(t => {
+            if (voteCounts[t] > maxV) {
+              maxV = voteCounts[t];
+              killedKey = t;
+            }
+          });
+        }
+
+        const healedKey = nightActions ? nightActions.healed : null;
+
+        if (killedKey && killedKey !== healedKey) {
+          SoundEffects.playKillSound();
+          roomRef.child(`players/${killedKey}`).update({ isAlive: false });
+          summaryMsg += `تمت تصفية اللاعب: ${players[killedKey].name} ليلاً.`;
+          addGameLog(`تمت تصفية اللاعب (${players[killedKey].name}) ليلاً.`);
+          players[killedKey].isAlive = false;
+        } else if (killedKey && killedKey === healedKey) {
+          summaryMsg += `أنقذ الطبيب الهدف بنجاح! لم يمت أحد.`;
+          addGameLog(`نجح الطبيب في الإنقاذ.`);
         } else {
-          let killedKey = null;
-          if (nightActions && nightActions.mafiaVotes) {
-            const voteCounts = {};
-            Object.values(nightActions.mafiaVotes).forEach(target => {
-              voteCounts[target] = (voteCounts[target] || 0) + 1;
-            });
-            let maxV = 0;
-            Object.keys(voteCounts).forEach(t => {
-              if (voteCounts[t] > maxV) {
-                maxV = voteCounts[t];
-                killedKey = t;
-              }
-            });
-          }
-
-          const healedKey = nightActions ? nightActions.healed : null;
-
-          if (killedKey && killedKey !== healedKey) {
-            SoundEffects.playKillSound();
-            roomRef.child(`players/${killedKey}`).update({ isAlive: false });
-            daySummary += `تمت تصفية اللاعب: ${players[killedKey].name}.`;
-            addGameLog(`تمت تصفية اللاعب (${players[killedKey].name}) ليلاً.`);
-            players[killedKey].isAlive = false;
-          } else if (killedKey && killedKey === healedKey) {
-            daySummary += `أنقذ الطبيب الهدف بنجاح!`;
-            addGameLog(`نجح الطبيب في الإنقاذ.`);
-          } else {
-            daySummary += `مرّت الليلة بسلام.`;
-            addGameLog(`مرّت الليلة بسلام.`);
-          }
+          summaryMsg += `مرّت الليلة بسلام ولم يحدث شيء.`;
+          addGameLog(`مرّت الليلة بسلام.`);
         }
 
         if (checkWinConditions(players, secretRoles)) return;
 
         roomRef.update({ roundNumber: currentRoundNumber + 1 });
-        startPhase("day", 180, daySummary);
+        // التسلسل بعد الليل: نهار
+        startPhase("day", 180, summaryMsg);
         roomRef.child('nightActions').remove();
       });
     }
 
+    // بعد التصويت يأتي الليل حصرياً
     function resolveVoting() {
       roomRef.once('value', (snapshot) => {
         const data = snapshot.val();
@@ -1432,25 +1455,25 @@
         votingModalOverlay.style.display = 'none';
 
         if (isTie || !victimKey || maxVotes === 0) {
-          addGameLog(`تعادل الأصوات! تم تخطي الإعدام.`);
+          addGameLog(`تعادل الأصوات في التصويت! تم تخطي الإعدام.`);
           if (checkWinConditions(players, secretRoles)) return;
-          startPhase("night", 120, "تعادل في التصويت وتم تخطيه. حلّ الليل مجدداً...");
+          // التسلسل بعد التصويت: ليل
+          startPhase("night", 120, "تعادل في التصويت وتم تخطيه. حلّ الليل الآن والأدوار تنفذ مهامها...");
         } else {
-          SoundEffects.prevPlayKillSound(); // اصلاح بسيط
           SoundEffects.playKillSound();
           roomRef.child(`players/${victimKey}`).update({ isAlive: false });
           players[victimKey].isAlive = false;
           
           const victimRole = secretRoles[victimKey] || "مواطن";
-          const executionMsg = `اللاعب الأكثر تصويت عليه هو (${players[victimKey].name}) وكان دوره (${victimRole}).`;
+          const executionMsg = `نتيجة التصويت: تم إعدام (${players[victimKey].name}) وكان دوره (${victimRole}).`;
           
           addGameLog(executionMsg);
-          
           roomRef.child('messages/public').push({ text: executionMsg, isSystem: true });
 
           if (checkWinConditions(players, secretRoles)) return;
 
-          startPhase("night", 120, `تم إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
+          // التسلسل بعد التصويت: ليل
+          startPhase("night", 120, `تم إعدام ${players[victimKey].name}. حلّ الليل الآن...`);
         }
       });
     }

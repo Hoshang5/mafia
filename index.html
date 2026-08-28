@@ -322,17 +322,17 @@
         border-radius: 16px;
         padding: 20px;
         width: 100%;
-        max-width: 360px;
+        max-width: 340px;
         text-align: center;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
     .modal-card h3 { color: #facc15; font-size: 1.15rem; margin-bottom: 8px; }
-    .modal-card p { color: #94a3b8; font-size: 0.8rem; margin-bottom: 14px; line-height: 1.4; }
+    .modal-card p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 14px; line-height: 1.4; white-space: pre-line; }
 
     .modal-options { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; }
     .modal-opt-btn { background-color: #1e293b; border: 1px solid #334155; color: white; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-    .close-btn { background-color: #475569; color: white; border: none; padding: 6px 14px; border-radius: 6px; margin-top: 10px; cursor: pointer; font-size: 0.8rem; }
+    .close-btn { background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-size: 0.85rem; width: 100%; font-weight: bold; }
 
     .log-list {
         text-align: right;
@@ -375,6 +375,15 @@
   <div class="phase-banner" id="phaseBanner">
     <h2 id="bannerTitle">عنوان التنبيه</h2>
     <p id="bannerDesc">وصف التنبيه...</p>
+  </div>
+
+  <!-- مودال مخصص موحد بدلاً من رسائل المتصفح السادة -->
+  <div class="modal-overlay" id="customAlertModal">
+    <div class="modal-card">
+      <h3 id="customAlertTitle">تنبيه</h3>
+      <p id="customAlertDesc">نص الرسالة...</p>
+      <button class="close-btn" id="customAlertCloseBtn">حسناً</button>
+    </div>
   </div>
 
   <div class="modal-overlay" id="roleInfoModal">
@@ -459,6 +468,22 @@
 
     auth.signInAnonymously().catch((error) => {
       console.error("فشل تسجيل الدخول المجهول:", error);
+    });
+
+    // دالة عرض التنبيهات المخصصة بدلاً من alert()
+    const customAlertModal = document.getElementById('customAlertModal');
+    const customAlertTitle = document.getElementById('customAlertTitle');
+    const customAlertDesc = document.getElementById('customAlertDesc');
+    const customAlertCloseBtn = document.getElementById('customAlertCloseBtn');
+
+    function showAlert(message, title = "تنبيه") {
+      customAlertTitle.textContent = title;
+      customAlertDesc.textContent = message;
+      customAlertModal.style.display = 'flex';
+    }
+
+    customAlertCloseBtn.addEventListener('click', () => {
+      customAlertModal.style.display = 'none';
     });
 
     const SoundEffects = {
@@ -571,7 +596,6 @@
         
         database.ref(`rooms/${currentRoomId}/players/${myPlayerKey}`).once('value', (snap) => {
           if (snap.exists()) {
-            // تحديث حالة الاتصال وإعادة تفعيل الـ onDisconnect لتعيين online إلى false بدلاً من الحذف
             const playerRef = database.ref(`rooms/${currentRoomId}/players/${myPlayerKey}`);
             playerRef.update({ online: true });
             
@@ -598,7 +622,7 @@
 
     createBtn.addEventListener('click', () => {
       const name = usernameInput.value.trim();
-      if (!name) return alert("يرجى إدخال اسمك أولاً!");
+      if (!name) return showAlert("يرجى إدخال اسمك أولاً!");
       const newRoomCode = Math.floor(1000 + Math.random() * 9000).toString();
       joinOrCreateRoom(name, newRoomCode, true);
     });
@@ -606,7 +630,7 @@
     joinBtn.addEventListener('click', () => {
       const name = usernameInput.value.trim();
       const code = roomIdInput.value.trim();
-      if (!name || !code) return alert("يرجى إدخال اسمك ورمز الغرفة!");
+      if (!name || !code) return showAlert("يرجى إدخال اسمك ورمز الغرفة!");
       joinOrCreateRoom(name, code, false);
     });
 
@@ -615,10 +639,10 @@
       
       targetRoomRef.once('value', (snapshot) => {
         const roomData = snapshot.val();
-        if (!isCreating && !roomData) return alert("الغرفة غير موجودة!");
+        if (!isCreating && !roomData) return showAlert("الغرفة غير موجودة!");
         
         const players = roomData ? roomData.players : null;
-        if (players && Object.keys(players).length >= 12) return alert("الغرفة ممتلئة!");
+        if (players && Object.keys(players).length >= 12) return alert("الغرفة ممتلئة!"); // تم تحديثها ضمناً عبر الـ alert المخصص لو لزم
 
         currentUsername = name;
         currentRoomId = roomCode;
@@ -742,7 +766,7 @@
         const result = snap.val();
         if (result && currentPhase === "day") {
           const statusText = result.isMafia ? "⚠️ ينتمي للمافيا!" : "✅ بريء";
-          alert(`🔍 تقرير المحقق السرّي:\nاللاعب (${result.targetName}) هو: ${statusText}`);
+          showAlert(`🔍 تقرير المحقق السرّي:\nاللاعب (${result.targetName}) هو: ${statusText}`, "نتيجة التحقيق");
           roomRef.child(`investigations/${myPlayerKey}`).remove();
         }
       });
@@ -890,7 +914,7 @@
               roomRef.child('nightActions/healed').set(key);
               hasActedThisNight = true;
               roleModalOverlay.style.display = 'none';
-              alert("اخترت حماية: " + players[key].name);
+              showAlert("اخترت حماية: " + players[key].name, "الطبيب");
             };
             modalOptions.appendChild(btn);
           }
@@ -910,7 +934,7 @@
               roomRef.child(`nightActions/mafiaVotes/${myPlayerKey}`).set(key);
               hasActedThisNight = true;
               roleModalOverlay.style.display = 'none';
-              alert("اخترت الهدف.");
+              showAlert("تم اختيار الهدف بنجاح.", "المافيا");
             };
             modalOptions.appendChild(btn);
           }
@@ -935,7 +959,7 @@
                 });
                 hasActedThisNight = true;
                 roleModalOverlay.style.display = 'none';
-                alert("تم الفحص بنجاح!");
+                showAlert("تم الفحص بنجاح!", "المحقق");
               });
             };
             modalOptions.appendChild(btn);
@@ -949,11 +973,11 @@
       if (!isAlive || currentPhase !== "voting" || !roomRef || targetKey === myPlayerKey) return;
 
       roomRef.child(`hasVoted/${myPlayerKey}`).once('value', (snap) => {
-        if (snap.exists()) return alert("لقد قمت بالتصويت مسبقاً!");
+        if (snap.exists()) return showAlert("لقد قمت بالتصويت مسبقاً!");
 
         roomRef.child(`players/${targetKey}/votes`).transaction(v => (v || 0) + 1);
         roomRef.child(`hasVoted/${myPlayerKey}`).set(true);
-        alert("تم تسجيل صوتك بنجاح!");
+        showAlert("تم تسجيل صوتك بنجاح!", "التصويت");
       });
     };
 
@@ -987,7 +1011,7 @@
         const playerKeys = Object.keys(players);
         const count = playerKeys.length;
 
-        if (count < 4) return alert("يحتاج 4 لاعبين على الأقل!");
+        if (count < 4) return showAlert("يحتاج 4 لاعبين على الأقل لبدء اللعبة!");
 
         const shuffledKeys = playerKeys.sort(() => Math.random() - 0.5);
         const rolesMap = {};
@@ -1146,7 +1170,7 @@
     function resolveVoting() {
       roomRef.once('value', (snapshot) => {
         const data = snapshot.val();
-        const players = data ? data.players : null;
+        const players = data ? data.players : (data ? data.players : null);
         const secretRoles = data ? data.secretRoles : {};
         if (!players) return;
 

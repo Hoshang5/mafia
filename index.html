@@ -60,6 +60,10 @@
         margin-bottom: 6px;
         font-size: 1.5rem;
         font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
     }
 
     .login-box p {
@@ -95,6 +99,10 @@
         cursor: pointer;
         border: none;
         color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
     }
 
     .btn-primary { background-color: #dc2626; }
@@ -114,6 +122,9 @@
         color: #ef4444;
         font-size: 1rem;
         font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
 
     .room-info p {
@@ -155,7 +166,9 @@
         font-size: 0.65rem;
         padding: 2px 6px;
         border-radius: 10px;
-        display: block;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
         margin-bottom: 2px;
         font-weight: 600;
         text-align: center;
@@ -256,10 +269,11 @@
         cursor: pointer;
     }
 
-    .start-btn-sm { background-color: #16a34a; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; }
-    .skip-btn-sm { background-color: #d97706; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; }
-    .reset-btn-sm { background-color: #475569; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; display: none; }
-    .leave-btn-sm { background-color: #991b1b; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
+    .start-btn-sm { background-color: #16a34a; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; align-items: center; gap: 4px; }
+    .skip-btn-sm { background-color: #d97706; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; align-items: center; gap: 4px; }
+    .reset-btn-sm { background-color: #475569; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; display: none; align-items: center; gap: 4px; }
+    .leave-btn-sm { background-color: #991b1b; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .kick-btn-sm { background-color: #7f1d1d; color: #fca5a5; border: 1px solid #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; cursor: pointer; margin-right: 4px; display: inline-flex; align-items: center; gap: 2px; }
 
     main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; position: relative; }
     .chat-box { flex: 1; padding: 10px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
@@ -303,7 +317,7 @@
         height: auto; 
         line-height: normal; 
     }
-    .send-btn { background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+    .send-btn { background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; }
 
     .modal-overlay {
         position: fixed;
@@ -328,14 +342,13 @@
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
-    .modal-card h3 { color: #facc15; font-size: 1.15rem; margin-bottom: 8px; }
+    .modal-card h3 { color: #facc15; font-size: 1.15rem; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .modal-card p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 14px; line-height: 1.4; white-space: pre-line; }
 
     .modal-options { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto; }
     .modal-opt-btn { background-color: #1e293b; border: 1px solid #334155; color: white; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
     .close-btn { background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-size: 0.85rem; width: 100%; font-weight: bold; }
 
-    /* أنماط نافذة التصويت الجماعية */
     .voting-modal-content {
         text-align: right;
     }
@@ -390,6 +403,9 @@
     }
   </style>
 
+  <!-- FontAwesome for professional UI icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -398,13 +414,13 @@
 
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-      <h2>لعبة المافيا المحمية</h2>
+      <h2><i class="fa-solid fa-mask"></i> لعبة المافيا المحمية</h2>
       <p>أدخل اسمك ورمز الغرفة للانضمام أو أنشئ غرفة جديدة</p>
       <input type="text" id="usernameInput" placeholder="اسمك في اللعبة..." maxlength="15">
       <input type="text" id="roomIdInput" placeholder="رمز الغرفة (مثل 4829)..." maxlength="6">
       <div class="btn-group">
-        <button class="btn-primary" id="joinBtn">انضمام لغرفة</button>
-        <button class="btn-secondary" id="createBtn">إنشاء غرفة</button>
+        <button class="btn-primary" id="joinBtn"><i class="fa-solid fa-right-to-bracket"></i> انضمام</button>
+        <button class="btn-secondary" id="createBtn"><i class="fa-solid fa-circle-plus"></i> إنشاء</button>
       </div>
     </div>
   </div>
@@ -416,7 +432,7 @@
 
   <div class="modal-overlay" id="customAlertModal">
     <div class="modal-card">
-      <h3 id="customAlertTitle">تنبيه</h3>
+      <h3 id="customAlertTitle"><i class="fa-solid fa-circle-exclamation"></i> تنبيه</h3>
       <p id="customAlertDesc">نص الرسالة...</p>
       <button class="close-btn" id="customAlertCloseBtn">حسناً</button>
     </div>
@@ -424,7 +440,7 @@
 
   <div class="modal-overlay" id="roleInfoModal">
     <div class="modal-card">
-      <h3 id="roleInfoTitle">بطاقة الدور</h3>
+      <h3 id="roleInfoTitle"><i class="fa-solid fa-id-card"></i> بطاقة الدور</h3>
       <p id="roleInfoDesc">تفاصيل دورك والمطلوب منك خلال اللعبة...</p>
       <button class="close-btn" id="closeRoleModalBtn">إغلاق</button>
     </div>
@@ -432,7 +448,7 @@
 
   <div class="modal-overlay" id="gameLogModal">
     <div class="modal-card">
-      <h3>📜 سجل أحداث اللعبة</h3>
+      <h3><i class="fa-solid fa-scroll"></i> سجل أحداث اللعبة</h3>
       <p>قائمة بأهم الأحداث والقرارات:</p>
       <div class="log-list" id="gameLogList">
         <div class="log-item">لا توجد أحداث مسجلة بعد...</div>
@@ -449,16 +465,15 @@
     </div>
   </div>
 
-  <!-- نافذة التصويت التفاعلية الجديدة (مثل Among Us) -->
+  <!-- نافذة التصويت الجماعية -->
   <div class="modal-overlay" id="votingModalOverlay">
     <div class="modal-card" style="max-width: 400px;">
-      <h3>🗳️ نافذة التصويت الجماعي</h3>
+      <h3><i class="fa-solid fa-box-archive"></i> نافذة التصويت الجماعي</h3>
       <p>شاهد أصوات الجميع، اختر شخصاً للتصويت له، ويمكنك تغيير صوتك في أي وقت:</p>
       <div class="voting-modal-content" id="votingModalList" style="max-height: 260px; overflow-y: auto;">
-        <!-- قائمة التصويت يتم تعبئتها برمجياً -->
       </div>
       <div id="hostVotingCloseContainer" style="margin-top: 10px; display: none;">
-        <button class="close-btn" id="hostEndVotingBtn" style="background-color: #dc2626;">إنهاء التصويت (للهوست فقط)</button>
+        <button class="close-btn" id="hostEndVotingBtn" style="background-color: #dc2626;"><i class="fa-solid fa-check-double"></i> إنهاء التصويت</button>
       </div>
     </div>
   </div>
@@ -466,27 +481,27 @@
   <div class="app-container">
     <header>
       <div class="room-info">
-        <h1>المافيا</h1>
+        <h1><i class="fa-solid fa-shield-halved"></i> المافيا</h1>
         <p id="roomCodeDisplay">الغرفة: ----</p>
-        <p id="roomHostDisplay" style="color: #facc15; font-weight: bold;">Host: ----</p>
+        <p id="roomHostDisplay" style="color: #facc15; font-weight: bold;"><i class="fa-solid fa-crown"></i> Host: ----</p>
       </div>
 
       <div class="header-actions">
-        <div class="log-badge" id="gameLogBtn" title="عرض سجل الأحداث">📜 السجل</div>
-        <div class="role-badge" id="roleBadgeBtn" title="انقر لعرض تفاصيل دورك">🎴 دورك: <span id="myRoleDisplay">في الانتظار</span></div>
+        <div class="log-badge" id="gameLogBtn" title="عرض سجل الأحداث"><i class="fa-solid fa-scroll"></i> السجل</div>
+        <div class="role-badge" id="roleBadgeBtn" title="انقر لعرض تفاصيل دورك"><i class="fa-solid fa-id-badge"></i> دورك: <span id="myRoleDisplay">في الانتظار</span></div>
       </div>
 
       <div class="status-badge">
-        <span class="phase-tag" id="phaseDisplay">الانتظار</span>
+        <span class="phase-tag" id="phaseDisplay"><i class="fa-solid fa-hourglass-start"></i> الانتظار</span>
         <div class="timer" id="timerDisplay">00:00</div>
       </div>
     </header>
 
     <div class="players-bar" id="playersBar">
-      <button class="start-btn-sm" id="startGameBtn">بدء اللعبة (4-12)</button>
-      <button class="skip-btn-sm" id="skipPhaseBtn">تخطي الجولة ⏭️</button>
-      <button class="reset-btn-sm" id="resetGameBtn">إعادة ضبط</button>
-      <button class="leave-btn-sm" id="leaveRoomBtn">خروج</button>
+      <button class="start-btn-sm" id="startGameBtn"><i class="fa-solid fa-play"></i> بدء اللعبة (4-12)</button>
+      <button class="skip-btn-sm" id="skipPhaseBtn"><i class="fa-solid fa-forward-step"></i> تخطي الجولة</button>
+      <button class="reset-btn-sm" id="resetGameBtn"><i class="fa-solid fa-rotate-right"></i> إعادة ضبط</button>
+      <button class="leave-btn-sm" id="leaveRoomBtn"><i class="fa-solid fa-right-from-bracket"></i> خروج</button>
     </div>
 
     <main>
@@ -498,7 +513,7 @@
 
       <form class="chat-input-area" id="chatForm">
         <input type="text" id="chatInput" placeholder="اكتب رسالتك..." autocomplete="off" required>
-        <button type="submit" class="send-btn" id="sendBtn">إرسال</button>
+        <button type="submit" class="send-btn" id="sendBtn"><i class="fa-solid fa-paper-plane"></i> إرسال</button>
       </form>
     </main>
   </div>
@@ -528,7 +543,7 @@
     const customAlertCloseBtn = document.getElementById('customAlertCloseBtn');
 
     function showAlert(message, title = "تنبيه") {
-      customAlertTitle.textContent = title;
+      customAlertTitle.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${title}`;
       customAlertDesc.textContent = message;
       customAlertModal.style.display = 'flex';
     }
@@ -600,7 +615,6 @@
     const modalOptions = document.getElementById('modalOptions');
     const typingIndicatorBar = document.getElementById('typingIndicatorBar');
     
-    // عناصر نافذة التصويت
     const votingModalOverlay = document.getElementById('votingModalOverlay');
     const votingModalList = document.getElementById('votingModalList');
     const hostVotingCloseContainer = document.getElementById('hostVotingCloseContainer');
@@ -616,7 +630,7 @@
     let isHost = false;
     let hasActedThisNight = false;
     let playersCache = {};
-    let currentRoundNumber = 1; // تتبع رقم الجولة الحالية
+    let currentRoundNumber = 1;
     let typingTimeout = null;
 
     const roleDescriptions = {
@@ -628,7 +642,7 @@
     };
 
     roleBadgeBtn.addEventListener('click', () => {
-      roleInfoTitle.textContent = `دورك: ${myRole}`;
+      roleInfoTitle.innerHTML = `<i class="fa-solid fa-id-card"></i> دورك: ${myRole}`;
       roleInfoDesc.innerText = roleDescriptions[myRole] || "لا يوجد وصف متاح.";
       roleInfoModal.style.display = 'flex';
     });
@@ -701,6 +715,11 @@
         const roomData = snapshot.val();
         if (!isCreating && !roomData) return showAlert("الغرفة غير موجودة!");
         
+        const gameStatus = roomData ? roomData.status : "waiting";
+        if (gameStatus && gameStatus !== "waiting") {
+          return showAlert("عذراً، لقد بدأت اللعبة بالفعل ولا يمكن الانضمام الآن!");
+        }
+
         const players = roomData ? roomData.players : null;
         if (players && Object.keys(players).length >= 12) return showAlert("الغرفة ممتلئة!");
 
@@ -763,8 +782,8 @@
         if (isMe) msgDiv.classList.add('my-message');
 
         let badge = "";
-        if (channelType === "GHOST") badge = " 👻 [ميّت]";
-        if (channelType === "MAFIA") badge = " 🔪 [مافيا]";
+        if (channelType === "GHOST") badge = " <i class='fa-solid fa-ghost'></i> [ميّت]";
+        if (channelType === "MAFIA") badge = " <i class='fa-solid fa-skull'></i> [مافيا]";
 
         msgDiv.innerHTML = `<span class="${isMe ? 'sender-me' : 'sender-other'}">${data.sender}${badge}</span><p>${data.text}</p>`;
       }
@@ -780,6 +799,68 @@
       roomCodeDisplay.textContent = `الغرفة: #${roomId}`;
       chatBox.innerHTML = '<div class="system-msg"><span>انضممت إلى الغرفة #' + roomId + '</span></div>';
       
+      // الاستماع للغرفة بأكملها للتحقق مما إذا تم حذفها بواسطة الهوست
+      roomRef.on('value', (snapshot) => {
+        const roomData = snapshot.val();
+        if (!roomData) {
+          // تم حذف الغرفة بالكامل أو خرج الهوست
+          clearLocalStorage();
+          alert("تم إغلاق الغرفة أو خروج المضيف، سيتم إعادتك للرئيسية.");
+          location.reload();
+          return;
+        }
+
+        const prevPhase = currentPhase;
+        currentPhase = roomData.status || "waiting";
+        const timer = roomData.timer || 0;
+        currentRoundNumber = roomData.roundNumber || 1;
+
+        if (prevPhase !== currentPhase) {
+          hasActedThisNight = false;
+          
+          if (currentPhase === "night") {
+            SoundEffects.playNightSound();
+            showPhaseBanner("حلّ الليل", "الأدوار السرية تنفذ مهامها الآن");
+            votingModalOverlay.style.display = 'none';
+          } else if (currentPhase === "day") {
+            SoundEffects.playDaySound();
+            showPhaseBanner("أشرقت الشمس", "استيقظ الجميع للنقاش");
+            votingModalOverlay.style.display = 'none';
+          } else if (currentPhase === "voting") {
+            showPhaseBanner("بدء التصويت", "حان وقت اختيار من يتم إعدامه");
+            if (isAlive) {
+              votingModalOverlay.style.display = 'flex';
+              renderVotingModalContent();
+            }
+          }
+        }
+
+        updateChatPermissions();
+
+        if (currentPhase === "waiting") {
+          phaseDisplay.innerHTML = '<i class="fa-solid fa-hourglass-start"></i> الانتظار';
+          document.body.style.backgroundColor = "#0b0f19";
+          roleModalOverlay.style.display = 'none';
+          votingModalOverlay.style.display = 'none';
+        } else if (currentPhase === "night") {
+          phaseDisplay.innerHTML = '<i class="fa-solid fa-moon"></i> الليل';
+          document.body.style.backgroundColor = "#030712";
+          checkAndShowNightModal(playersCache);
+        } else if (currentPhase === "day") {
+          phaseDisplay.innerHTML = '<i class="fa-solid fa-sun"></i> النهار';
+          document.body.style.backgroundColor = "#0f172a";
+          roleModalOverlay.style.display = 'none';
+        } else if (currentPhase === "voting") {
+          phaseDisplay.innerHTML = '<i class="fa-solid fa-box-archive"></i> التصويت';
+          document.body.style.backgroundColor = "#1e1b4b";
+          roleModalOverlay.style.display = 'none';
+        }
+
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+        timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      });
+
       roomRef.child('messages/public').off();
       roomRef.child('messages/public').on('child_added', (snap) => {
         if (currentPhase !== "night" || isAlive) {
@@ -825,72 +906,16 @@
       roomRef.child(`investigations/${myPlayerKey}`).on('value', (snap) => {
         const result = snap.val();
         if (result && currentPhase === "day") {
-          const statusText = result.isMafia ? "⚠️ ينتمي للمافيا!" : "✅ بريء";
-          showAlert(`🔍 تقرير المحقق السرّي:\nاللاعب (${result.targetName}) هو: ${statusText}`, "نتيجة التحقيق");
+          const statusText = result.isMafia ? "ينتمي للمافيا!" : "بريء";
+          showAlert(`تقييم المحقق السرّي:\nاللاعب (${result.targetName}) هو: ${statusText}`, "نتيجة التحقيق");
           roomRef.child(`investigations/${myPlayerKey}`).remove();
         }
       });
 
-      // استماع لتغيرات أصوات التصويت لعرضها فوراً مثل Among Us
       roomRef.child('votingData').on('value', (snap) => {
         if (currentPhase === "voting") {
           renderVotingModalContent();
         }
-      });
-
-      roomRef.on('value', (snapshot) => {
-        const roomData = snapshot.val();
-        if (!roomData) return;
-
-        const prevPhase = currentPhase;
-        currentPhase = roomData.status || "waiting";
-        const timer = roomData.timer || 0;
-        currentRoundNumber = roomData.roundNumber || 1;
-
-        if (prevPhase !== currentPhase) {
-          hasActedThisNight = false;
-          
-          if (currentPhase === "night") {
-            SoundEffects.playNightSound();
-            showPhaseBanner("🌙 حلّ الليل", "الأدوار السرية تنفذ مهامها الآن");
-            votingModalOverlay.style.display = 'none';
-          } else if (currentPhase === "day") {
-            SoundEffects.playDaySound();
-            showPhaseBanner("☀️ أشرقت الشمس", "استيقظ الجميع للنقاش");
-            votingModalOverlay.style.display = 'none';
-          } else if (currentPhase === "voting") {
-            showPhaseBanner("🗳️ بدء التصويت", "حان وقت اختيار من يتم إعدامه");
-            if (isAlive) {
-              votingModalOverlay.style.display = 'flex';
-              renderVotingModalContent();
-            }
-          }
-        }
-
-        updateChatPermissions();
-
-        if (currentPhase === "waiting") {
-          phaseDisplay.textContent = "الانتظار";
-          document.body.style.backgroundColor = "#0b0f19";
-          roleModalOverlay.style.display = 'none';
-          votingModalOverlay.style.display = 'none';
-        } else if (currentPhase === "night") {
-          phaseDisplay.textContent = "الليل 🌙";
-          document.body.style.backgroundColor = "#030712";
-          checkAndShowNightModal(playersCache);
-        } else if (currentPhase === "day") {
-          phaseDisplay.textContent = "النهار ☀️";
-          document.body.style.backgroundColor = "#0f172a";
-          roleModalOverlay.style.display = 'none';
-        } else if (currentPhase === "voting") {
-          phaseDisplay.textContent = "التصويت 🗳️";
-          document.body.style.backgroundColor = "#1e1b4b";
-          roleModalOverlay.style.display = 'none';
-        }
-
-        const minutes = Math.floor(timer / 60);
-        const seconds = timer % 60;
-        timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
       });
 
       roomRef.child('players').on('value', (snapshot) => {
@@ -905,15 +930,15 @@
             }
           });
         }
-        roomHostDisplay.textContent = `Host: ${hostName}`;
+        roomHostDisplay.innerHTML = `<i class="fa-solid fa-crown"></i> Host: ${hostName}`;
 
         if (players && myPlayerKey && players[myPlayerKey]) {
           isAlive = players[myPlayerKey].isAlive;
           isHost = !!players[myPlayerKey].isHost;
           
-          startGameBtn.style.display = isHost ? "inline-block" : "none";
-          skipPhaseBtn.style.display = (isHost && currentPhase !== "waiting") ? "inline-block" : "none";
-          resetGameBtn.style.display = isHost ? "inline-block" : "none";
+          startGameBtn.style.display = isHost ? "inline-flex" : "none";
+          skipPhaseBtn.style.display = (isHost && currentPhase !== "waiting") ? "inline-flex" : "none";
+          resetGameBtn.style.display = isHost ? "inline-flex" : "none";
           hostVotingCloseContainer.style.display = isHost ? "block" : "none";
         }
 
@@ -929,9 +954,17 @@
             playerCard.className = `player-card ${player.isAlive ? '' : 'dead'}`;
             
             const isOnline = player.online !== false;
+            
+            // زر الطرد إذا كان الهوست وهذا اللاعب ليس الهوست نفسه
+            let kickBtnHTML = '';
+            if (isHost && key !== myPlayerKey && currentPhase === "waiting") {
+              kickBtnHTML = `<button class="kick-btn-sm" onclick="kickPlayer('${key}')"><i class="fa-solid fa-user-xmark"></i> طرد</button>`;
+            }
+
             playerCard.innerHTML = `
               <span class="status-dot ${isOnline ? 'online' : ''}"></span>
-              <span>${player.name} ${player.isHost ? '👑' : ''}</span>
+              <span>${player.name} ${player.isHost ? '<i class="fa-solid fa-crown" style="color:#facc15;"></i>' : ''}</span>
+              ${kickBtnHTML}
             `;
             playersBar.appendChild(playerCard);
           });
@@ -942,6 +975,14 @@
         }
       });
     }
+
+    // وظيفة طرد اللاعبين من قبل الهوست
+    window.kickPlayer = function(targetKey) {
+      if (!isHost || !roomRef) return;
+      database.ref(`rooms/${currentRoomId}/players/${targetKey}`).remove().then(() => {
+        addGameLog(`تم طرد اللاعب من الغرفة بواسطة المضيف.`);
+      });
+    };
 
     chatInput.addEventListener('input', () => {
       if (!roomRef || !myPlayerKey) return;
@@ -958,16 +999,16 @@
       if (!isAlive) {
         chatInput.disabled = false;
         sendBtn.disabled = false;
-        chatInput.placeholder = "👻 أنت ميت.. تتحدث مع الموتى فقط...";
+        chatInput.placeholder = "أنت ميت.. تتحدث مع الموتى فقط...";
       } else if (currentPhase === "night") {
         if (myRole === "مافيا") {
           chatInput.disabled = false;
           sendBtn.disabled = false;
-          chatInput.placeholder = "🔪 شات المافيا السرّي...";
+          chatInput.placeholder = "شات المافيا السرّي...";
         } else {
           chatInput.disabled = true;
           sendBtn.disabled = true;
-          chatInput.placeholder = "🌙 الجميع نيام.. الشات مغلق...";
+          chatInput.placeholder = "الجميع نيام.. الشات مغلق...";
         }
       } else {
         chatInput.disabled = false;
@@ -977,7 +1018,6 @@
     }
 
     function checkAndShowNightModal(players) {
-      // الشرط الجديد: الجولة الأولى لا يُسمح للمافيا والكل بالتحرك أو القتل أو الحماية
       if (!isAlive || hasActedThisNight || !players || currentRoundNumber === 1) {
         roleModalOverlay.style.display = 'none';
         return;
@@ -986,7 +1026,7 @@
       modalOptions.innerHTML = '';
 
       if (myRole === "طبيب") {
-        modalTitle.textContent = "💉 دور الطبيب";
+        modalTitle.innerHTML = `<i class="fa-solid fa-suitcase-medical"></i> دور الطبيب`;
         modalDesc.textContent = "من تريد أن تحميه هذا الليل؟";
         
         Object.keys(players).forEach(key => {
@@ -1006,7 +1046,7 @@
         roleModalOverlay.style.display = 'flex';
 
       } else if (myRole === "مافيا") {
-        modalTitle.textContent = "🔪 دور القاتل (المافيا)";
+        modalTitle.innerHTML = `<i class="fa-solid fa-skull"></i> دور القاتل (المافيا)`;
         modalDesc.textContent = "من تريد إعدامه الليلة؟";
         
         Object.keys(players).forEach(key => {
@@ -1026,7 +1066,7 @@
         roleModalOverlay.style.display = 'flex';
 
       } else if (myRole === "محقق") {
-        modalTitle.textContent = "🔍 دور المحقق";
+        modalTitle.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> دور المحقق`;
         modalDesc.textContent = "اختر أحداً لتتحقق منه:";
         
         Object.keys(players).forEach(key => {
@@ -1053,17 +1093,14 @@
       }
     }
 
-    // دوال عرض وتحديث التصويت الجماعي (مثل Among Us مع ميزة تغيير الصوت)
     function renderVotingModalContent() {
       roomRef.once('value', (snap) => {
         const data = snap.val();
         if (!data || !data.players) return;
         const players = data.players;
-        const votingData = data.votingData || {}; // يشمل كل مفتاح لاعب والشخص الذي صوت له
+        const votingData = data.votingData || {};
 
-        // حساب عدد الأصوات لكل لاعب من خلال جدول votingData
         const voteCounts = {};
-        // لتتبع من صوت لمن: { voterKey: targetKey }
         const votesMapping = {};
 
         Object.keys(votingData).forEach(voterKey => {
@@ -1080,7 +1117,6 @@
 
           const count = voteCounts[targetKey] || 0;
           
-          // تجميع أسماء المصوتين على هذا الشخص لعرض من المصوت على من في نفس الوقت
           const votersListNames = [];
           Object.keys(votesMapping).forEach(voterKey => {
             if (votesMapping[voterKey] === targetKey && players[voterKey]) {
@@ -1096,7 +1132,7 @@
           let actionBtnHTML = '';
           if (isAlive && targetKey !== myPlayerKey) {
             actionBtnHTML = `<button class="vote-action-btn ${isMyTarget ? 'voted' : ''}" onclick="handleVoteAction('${targetKey}')">
-              ${isMyTarget ? 'تم التصويت ✓ (تغيير)' : 'تصويت'}
+              ${isMyTarget ? 'تم التصويت (تغيير)' : 'تصويت'}
             </button>`;
           } else if (targetKey === myPlayerKey && isAlive) {
             actionBtnHTML = `<span style="font-size:0.7rem; color:#64748b;">(لا يمكنك التصويت لنفسك)</span>`;
@@ -1117,13 +1153,11 @@
     window.handleVoteAction = function(targetKey) {
       if (!isAlive || currentPhase !== "voting" || !roomRef || targetKey === myPlayerKey) return;
 
-      // لتطبيق ميزة القدرة على تغيير التصويت (مثل Among Us)، نقوم بتحديث اختيار اللاعب مباشرة دون قيود مسبقة
       roomRef.child(`votingData/${myPlayerKey}`).set(targetKey).then(() => {
         renderVotingModalContent();
       });
     };
 
-    // الهوست ينهي التصويت يدوياً
     hostEndVotingBtn.addEventListener('click', () => {
       if (!roomRef || !isHost || currentPhase !== "voting") return;
       resolveVoting();
@@ -1183,9 +1217,8 @@
         roomRef.child('gameLogs').remove();
         roomRef.update({ roundNumber: 1 });
 
-        addGameLog("🎮 بدأت لعبة جديدة (الجولة الأولى).");
-        // الجولة الأولى: الليل الأول يبدأ بدون حركات (لا قتل ولا حماية ولا تحقيق حسب الطلب)
-        startPhase("night", 120, "🌙 بدأ الليل الأول (هدنة مؤقتة: لا يمكن للمافيا القتل أو الحماية أو التحقيق).");
+        addGameLog("بدأت لعبة جديدة (الجولة الأولى).");
+        startPhase("night", 120, "بدء الليل الأول (هدنة مؤقتة: لا يمكن للمافيا القتل أو الحماية أو التحقيق).");
       });
     });
 
@@ -1206,10 +1239,21 @@
 
     leaveRoomBtn.addEventListener('click', () => {
       if (roomRef && myPlayerKey) {
-        roomRef.child(`players/${myPlayerKey}`).remove().then(() => reassignHostIfNeeded(currentRoomId));
+        if (isHost) {
+          // إذا كان الهوست هو من خرج، قم بحذف الغرفة بالكامل لإنهاء الغرفة وتخريبها تلقائياً
+          roomRef.remove().then(() => {
+            clearLocalStorage();
+            location.reload();
+          });
+        } else {
+          roomRef.child(`players/${myPlayerKey}`).remove().then(() => reassignHostIfNeeded(currentRoomId));
+          clearLocalStorage();
+          location.reload();
+        }
+      } else {
+        clearLocalStorage();
+        location.reload();
       }
-      clearLocalStorage();
-      location.reload();
     });
 
     function addGameLog(text) {
@@ -1222,7 +1266,6 @@
       
       let updates = { status: phaseName, timer: duration };
       
-      // إذا تحولنا للنهار أو الليل، يمكننا زيادة رقم الجولة عند بداية الليل الجديد
       roomRef.update(updates);
       roomRef.child('messages/public').push({ text: sysMessage, isSystem: true });
       roomRef.child('votingData').remove();
@@ -1232,7 +1275,6 @@
       if (!roomRef || !isHost) return;
       roomRef.child('timer').transaction((t) => (t > 0 ? t - 1 : 0), (err, committed, snap) => {
         if (committed && snap.val() === 0 && currentPhase !== "waiting") {
-          // تم إزالة وقت التصويت التلقائي بناءً على طلبك (الهوست هو من ينهي التصويت يدوياً)
           if (currentPhase === "voting") return; 
           handlePhaseTimeout();
         }
@@ -1243,8 +1285,7 @@
       if (!isHost) return;
       if (currentPhase === "night") resolveNightActions();
       else if (currentPhase === "day") {
-        // الانتقال لمرحلة التصويت وفتح نافذة التصويت
-        startPhase("voting", 0, "🗳️ حان وقت التصويت! اختر من هو المافيا.");
+        startPhase("voting", 0, "حان وقت التصويت! اختر من هو المافيا.");
       }
     }
 
@@ -1260,10 +1301,10 @@
       });
 
       if (aliveMafia === 0) {
-        endGame("🎉 فاز المواطنون!");
+        endGame("فاز المواطنون!");
         return true;
       } else if (aliveMafia >= aliveCitizens) {
-        endGame("🔪 فازت المافيا!");
+        endGame("فازت المافيا!");
         return true;
       }
       return false;
@@ -1285,12 +1326,11 @@
 
         if (!players) return;
 
-        let daySummary = "☀️ أشرقت الشمس!\n";
+        let daySummary = "أشرقت الشمس!\n";
 
-        // فحص ما إذا كانت هذه الجولة الأولى (الجولة الأولى تعني عدم حدوث قتل أو حماية)
         if (currentRoundNumber === 1) {
-          daySummary += `✨ مرت الجولة الأولى بسلام (لا قتل ولا حماية).`;
-          addGameLog(`✨ مرت الجولة الأولى بسلام.`);
+          daySummary += `مرت الجولة الأولى بسلام (لا قتل ولا حماية).`;
+          addGameLog(`مرت الجولة الأولى بسلام.`);
         } else {
           let killedKey = null;
           if (nightActions && nightActions.mafiaVotes) {
@@ -1312,21 +1352,20 @@
           if (killedKey && killedKey !== healedKey) {
             SoundEffects.playKillSound();
             roomRef.child(`players/${killedKey}`).update({ isAlive: false });
-            daySummary += `❌ اغتالت المافيا اللاعب: ${players[killedKey].name}.`;
-            addGameLog(`❌ تمت تصفية اللاعب (${players[killedKey].name}) ليلاً.`);
+            daySummary += `تمت تصفية اللاعب: ${players[killedKey].name}.`;
+            addGameLog(`تمت تصفية اللاعب (${players[killedKey].name}) ليلاً.`);
             players[killedKey].isAlive = false;
           } else if (killedKey && killedKey === healedKey) {
-            daySummary += `🛡️ أنقذ الطبيب الهدف بنجاح!`;
-            addGameLog(`🛡️ نجح الطبيب في الإنقاذ.`);
+            daySummary += `أنقذ الطبيب الهدف بنجاح!`;
+            addGameLog(`نجح الطبيب في الإنقاذ.`);
           } else {
-            daySummary += `✨ مرّت الليلة بسلام.`;
-            addGameLog(`✨ مرّت الليلة بسلام.`);
+            daySummary += `مرّت الليلة بسلام.`;
+            addGameLog(`مرّت الليلة بسلام.`);
           }
         }
 
         if (checkWinConditions(players, secretRoles)) return;
 
-        // زيادة رقم الجولة القادمة
         roomRef.update({ roundNumber: currentRoundNumber + 1 });
         startPhase("day", 180, daySummary);
         roomRef.child('nightActions').remove();
@@ -1341,7 +1380,6 @@
         const votingData = data ? data.votingData : {};
         if (!players) return;
 
-        // حساب الأصوات المستلمة من نافذة التصويت التفاعلية
         const voteCounts = {};
         Object.values(votingData).forEach(targetKey => {
           voteCounts[targetKey] = (voteCounts[targetKey] || 0) + 1;
@@ -1364,23 +1402,31 @@
 
         votingModalOverlay.style.display = 'none';
 
-        // إذا حدث تعادل في الأصوات يتخطى التصويت ولا يتم إعدام أحد
         if (isTie || !victimKey || maxVotes === 0) {
-          addGameLog(`🗳️ تعادل الأصوات! تم تخطي الإعدام.`);
+          addGameLog(`تعادل الأصوات! تم تخطي الإعدام.`);
           if (checkWinConditions(players, secretRoles)) return;
-          startPhase("night", 120, "🗳️ تعادل في التصويت وتم تخطيه. حلّ الليل مجدداً...");
+          startPhase("night", 120, "تعادل في التصويت وتم تخطيه. حلّ الليل مجدداً...");
         } else {
           SoundEffects.playKillSound();
           roomRef.child(`players/${victimKey}`).update({ isAlive: false });
           players[victimKey].isAlive = false;
           
-          addGameLog(`🗳️ تم إعدام اللاعب (${players[victimKey].name}).`);
+          const victimRole = secretRoles[victimKey] || "مواطن";
+          const executionMsg = `اللاعب الأكثر تصويت عليه هو (${players[victimKey].name}) وكان دوره (${victimRole}).`;
+          
+          addGameLog(executionMsg);
+          
+          // إرسال رسالة النظام بالشكل المطلوب بدقة
+          roomRef.child('messages/public').push({ text: executionMsg, isSystem: true });
+
           if (checkWinConditions(players, secretRoles)) return;
 
-          startPhase("night", 120, `🗳️ تم إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
+          startPhase("night", 120, `تم إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
         }
       });
     }
   </script>
 </body>
 </html>
+
+هل هاد الكود بالكامل بعظ التعديل

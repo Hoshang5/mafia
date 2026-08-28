@@ -1,4 +1,4 @@
-.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -47,11 +47,11 @@
 
     .login-box {
         background-color: #151d2a;
-        padding: 28px;
+        padding: 24px;
         border-radius: 16px;
         border: 1px solid #243044;
         width: 100%;
-        max-width: 360px;
+        max-width: 340px;
         text-align: center;
         box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
     }
@@ -59,14 +59,14 @@
     .login-box h2 {
         color: #ef4444;
         margin-bottom: 6px;
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         font-weight: 800;
     }
 
     .login-box p {
         color: #64748b;
-        font-size: 0.85rem;
-        margin-bottom: 20px;
+        font-size: 0.8rem;
+        margin-bottom: 16px;
     }
 
     .login-box input {
@@ -74,25 +74,25 @@
         background-color: #0b0f19;
         border: 1px solid #334155;
         border-radius: 10px;
-        padding: 12px;
+        padding: 10px 12px;
         color: white;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         outline: none;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         text-align: center;
     }
 
     .btn-group {
         display: flex;
-        gap: 10px;
+        gap: 8px;
     }
 
     .btn-primary, .btn-secondary {
         flex: 1;
-        padding: 12px;
+        padding: 10px;
         border-radius: 10px;
         font-weight: bold;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         cursor: pointer;
         border: none;
         color: white;
@@ -104,7 +104,7 @@
     /* الشريط العلوي */
     header {
         background-color: #151d2a;
-        padding: 10px 16px;
+        padding: 8px 12px;
         border-bottom: 1px solid #243044;
         display: flex;
         justify-content: space-between;
@@ -114,38 +114,32 @@
 
     .room-info h1 {
         color: #ef4444;
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 800;
     }
 
     .room-info p {
         color: #64748b;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
 
     .header-actions {
         display: flex;
-        gap: 6px;
+        gap: 4px;
         align-items: center;
     }
 
     .role-badge, .log-badge {
         background: linear-gradient(135deg, #1e293b, #0f172a);
-        padding: 6px 12px;
+        padding: 4px 10px;
         border-radius: 20px;
         border: 1px solid #3b82f6;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: #94a3b8;
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
         display: flex;
         align-items: center;
         gap: 4px;
-    }
-
-    .role-badge:hover, .log-badge:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
     }
 
     .role-badge span {
@@ -160,16 +154,17 @@
     .phase-tag {
         background-color: #312e81;
         color: #a5b4fc;
-        font-size: 0.7rem;
-        padding: 2px 8px;
-        border-radius: 12px;
+        font-size: 0.65rem;
+        padding: 2px 6px;
+        border-radius: 10px;
         display: block;
         margin-bottom: 2px;
         font-weight: 600;
+        text-align: center;
     }
 
     .timer {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: bold;
         color: #ef4444;
         font-family: monospace;
@@ -184,13 +179,14 @@
         background: rgba(15, 23, 42, 0.95);
         border: 2px solid #ef4444;
         box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
-        padding: 20px 40px;
+        padding: 16px 24px;
         border-radius: 16px;
         text-align: center;
         z-index: 200;
         opacity: 0;
         pointer-events: none;
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        max-width: 90%;
     }
 
     .phase-banner.show {
@@ -199,25 +195,25 @@
     }
 
     .phase-banner h2 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
         color: #facc15;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
     }
 
     .phase-banner p {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         color: #cbd5e1;
     }
 
     /* شريط التحكم واللاعبين */
     .players-bar {
         background-color: #0f172a;
-        padding: 10px 14px;
+        padding: 8px 12px;
         border-bottom: 1px solid #1e293b;
         overflow-x: auto;
         white-space: nowrap;
         display: flex;
-        gap: 8px;
+        gap: 6px;
         align-items: center;
         flex-shrink: 0;
     }
@@ -226,15 +222,14 @@
 
     .player-card {
         background-color: #1e293b;
-        padding: 6px 12px;
+        padding: 5px 10px;
         border-radius: 8px;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         flex-shrink: 0;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         border: 1px solid #334155;
-        position: relative;
     }
 
     .player-card.dead {
@@ -243,59 +238,77 @@
         background-color: #111827;
     }
 
-    /* مؤشر الاتصال (نقطة خضراء/رمادية) */
     .status-dot {
-        width: 8px;
-        height: 8px;
+        width: 7px;
+        height: 7px;
         border-radius: 50%;
         display: inline-block;
         background-color: #64748b;
     }
     .status-dot.online {
         background-color: #22c55e;
-        box-shadow: 0 0 6px #22c55e;
+        box-shadow: 0 0 5px #22c55e;
     }
 
     .action-btn-sm {
         background-color: #dc2626;
         color: white;
         border: none;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 0.75rem;
+        padding: 3px 6px;
+        border-radius: 5px;
+        font-size: 0.7rem;
         cursor: pointer;
     }
 
-    .start-btn-sm { background-color: #16a34a; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; cursor: pointer; display: none; }
-    .reset-btn-sm { background-color: #475569; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; display: none; }
-    .leave-btn-sm { background-color: #991b1b; color: white; border: none; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
+    .start-btn-sm { background-color: #16a34a; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; }
+    .reset-btn-sm { background-color: #475569; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; display: none; }
+    .leave-btn-sm { background-color: #991b1b; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; }
 
     /* الشات */
     main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; position: relative; }
-    .chat-box { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+    .chat-box { flex: 1; padding: 10px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
 
-    .system-msg { text-align: center; margin: 4px 0; }
-    .system-msg span { background-color: #151d2a; color: #94a3b8; font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; border: 1px solid #243044; display: inline-block; white-space: pre-line; }
+    .system-msg { text-align: center; margin: 2px 0; }
+    .system-msg span { background-color: #151d2a; color: #94a3b8; font-size: 0.75rem; padding: 5px 12px; border-radius: 16px; border: 1px solid #243044; display: inline-block; white-space: pre-line; }
 
-    .message { background-color: #1e293b; padding: 10px 14px; border-radius: 12px; max-width: 80%; width: fit-content; align-self: flex-start; }
+    .message { background-color: #1e293b; padding: 8px 12px; border-radius: 10px; max-width: 85%; width: fit-content; align-self: flex-start; }
     .message.my-message { background-color: #312e81; border: 1px solid #4338ca; align-self: flex-end; }
-    .sender-other { font-size: 0.75rem; font-weight: bold; color: #818cf8; margin-bottom: 4px; display: block; }
-    .sender-me { font-size: 0.75rem; font-weight: bold; color: #facc15; margin-bottom: 4px; display: block; }
-    .message p { font-size: 0.9rem; line-height: 1.4; }
+    .sender-other { font-size: 0.7rem; font-weight: bold; color: #818cf8; margin-bottom: 2px; display: block; }
+    .sender-me { font-size: 0.7rem; font-weight: bold; color: #facc15; margin-bottom: 2px; display: block; }
+    .message p { font-size: 0.85rem; line-height: 1.35; word-break: break-word; }
 
-    /* شريط مؤشر الكتابة (Typing Indicator) فوق حقل الإدخال مباشرة */
+    /* شريط مؤشر الكتابة المصلح */
     .typing-indicator-bar {
-        padding: 4px 16px;
-        font-size: 0.75rem;
+        padding: 2px 12px;
+        font-size: 0.7rem;
         color: #94a3b8;
         background-color: #151d2a;
-        min-height: 20px;
+        min-height: 16px;
         font-style: italic;
     }
 
-    .chat-input-area { padding: 10px 14px; background-color: #151d2a; border-top: 1px solid #243044; display: flex; gap: 10px; flex-shrink: 0; }
-    .chat-input-area input { flex: 1; background-color: #0b0f19; border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; color: white; font-size: 0.9rem; outline: none; }
-    .send-btn { background-color: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    .chat-input-area { 
+        padding: 8px 12px; 
+        background-color: #151d2a; 
+        border-top: 1px solid #243044; 
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+        flex-shrink: 0; 
+    }
+    .chat-input-area input { 
+        flex: 1; 
+        background-color: #0b0f19; 
+        border: 1px solid #334155; 
+        border-radius: 8px; 
+        padding: 10px 12px; 
+        color: white; 
+        font-size: 0.85rem; 
+        outline: none; 
+        height: auto; 
+        line-height: normal; 
+    }
+    .send-btn { background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
 
     /* النوافذ المنسدلة */
     .modal-overlay {
@@ -307,30 +320,30 @@
         display: none;
         justify-content: center;
         align-items: center;
-        padding: 20px;
+        padding: 16px;
     }
 
     .modal-card {
         background-color: #151d2a;
         border: 1px solid #334155;
         border-radius: 16px;
-        padding: 24px;
+        padding: 20px;
         width: 100%;
-        max-width: 400px;
+        max-width: 360px;
         text-align: center;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
-    .modal-card h3 { color: #facc15; font-size: 1.3rem; margin-bottom: 10px; }
-    .modal-card p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 16px; line-height: 1.5; }
+    .modal-card h3 { color: #facc15; font-size: 1.15rem; margin-bottom: 8px; }
+    .modal-card p { color: #94a3b8; font-size: 0.8rem; margin-bottom: 14px; line-height: 1.4; }
 
-    .modal-options { display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto; }
-    .modal-opt-btn { background-color: #1e293b; border: 1px solid #334155; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
-    .close-btn { background-color: #475569; color: white; border: none; padding: 8px 16px; border-radius: 8px; margin-top: 12px; cursor: pointer; }
+    .modal-options { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; }
+    .modal-opt-btn { background-color: #1e293b; border: 1px solid #334155; color: white; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
+    .close-btn { background-color: #475569; color: white; border: none; padding: 6px 14px; border-radius: 6px; margin-top: 10px; cursor: pointer; font-size: 0.8rem; }
 
     .log-list {
         text-align: right;
-        max-height: 220px;
+        max-height: 200px;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
@@ -339,9 +352,9 @@
     }
     .log-item {
         background-color: #1e293b;
-        padding: 8px 10px;
-        border-radius: 8px;
-        font-size: 0.8rem;
+        padding: 6px 8px;
+        border-radius: 6px;
+        font-size: 0.75rem;
         border-right: 3px solid #3b82f6;
         color: #cbd5e1;
     }
@@ -621,7 +634,6 @@
           online: true
         });
 
-        // إدارة حالة الاتصال (Firebase Presence)
         const connectedRef = database.ref('.info/connected');
         connectedRef.on('value', (snap) => {
           if (snap.val() === true) {
@@ -684,11 +696,17 @@
       chatBox.innerHTML = '<div class="system-msg"><span>انضممت إلى الغرفة #' + roomId + '</span></div>';
       
       roomRef.child('messages/public').off();
-      roomRef.child('messages/public').on('child_added', (snap) => renderMessage(snap.val(), 'PUBLIC'));
+      roomRef.child('messages/public').on('child_added', (snap) => {
+        if (currentPhase !== "night" || isAlive) {
+          renderMessage(snap.val(), 'PUBLIC');
+        }
+      });
 
       roomRef.child('messages/mafia').off();
       roomRef.child('messages/mafia').on('child_added', (snap) => {
-        if (myRole === "مافيا") renderMessage(snap.val(), 'MAFIA');
+        if (myRole === "مافيا" && isAlive && currentPhase === "night") {
+          renderMessage(snap.val(), 'MAFIA');
+        }
       });
 
       roomRef.child('messages/ghosts').off();
@@ -713,7 +731,6 @@
         }
       });
 
-      // الاستماع لمؤشرات الكتابة في الغرفة
       roomRef.child('typing').off();
       roomRef.child('typing').on('value', (snap) => {
         const typingData = snap.val() || {};
@@ -721,8 +738,14 @@
         
         Object.keys(typingData).forEach(pKey => {
           if (pKey !== myPlayerKey && typingData[pKey]) {
-            if (playersCache[pKey] && playersCache[pKey].name) {
-              typingNames.push(playersCache[pKey].name);
+            if (currentPhase === "night") {
+              if (myRole === "مافيا" && playersCache[pKey] && secretRolesCache[pKey] === "مافيا") {
+                typingNames.push(playersCache[pKey].name);
+              }
+            } else {
+              if (playersCache[pKey] && playersCache[pKey].name) {
+                typingNames.push(playersCache[pKey].name);
+              }
             }
           }
         });
@@ -838,9 +861,15 @@
       });
     }
 
-    // إرسال مؤشر الكتابة عند الضغط على الحقل
+    let secretRolesCache = {};
+    roomRef && roomRef.child('secretRoles').on('value', (snap) => {
+      secretRolesCache = snap.val() || {};
+    });
+
     chatInput.addEventListener('input', () => {
       if (!roomRef || !myPlayerKey) return;
+      if (currentPhase === "night" && myRole !== "مافيا" && isAlive) return;
+      
       roomRef.child(`typing/${myPlayerKey}`).set(true);
 
       clearTimeout(typingTimeout);
@@ -853,7 +882,7 @@
       if (!isAlive) {
         chatInput.disabled = false;
         sendBtn.disabled = false;
-        chatInput.placeholder = "👻 أنت ميت.. يمكنك التحدث مع الموتى فقط...";
+        chatInput.placeholder = "👻 أنت ميت.. تتحدث مع الموتى فقط...";
       } else if (currentPhase === "night") {
         if (myRole === "مافيا") {
           chatInput.disabled = false;
@@ -974,7 +1003,6 @@
       const text = chatInput.value.trim();
       if (!text || !currentUsername || !roomRef) return;
 
-      // مسح مؤشر الكتابة فور الإرسال
       if (myPlayerKey) roomRef.child(`typing/${myPlayerKey}`).remove();
 
       let msgTarget = "messages/public";
@@ -1190,7 +1218,7 @@
           startPhase("night", 120, `🗳️ قرر الشعب إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
         } else {
           addGameLog(`🗳️ انتهى وقت التصويت دون اتفاق الشعب على إعدام أحد.`);
-          if (checkWinConditions.players, secretRoles) return;
+          if (checkWinConditions(players, secretRoles)) return;
 
           startPhase("night", 120, "🗳️ لم يتفق الجميع على إعدام أحد. حلّ الليل مجدداً...");
         }

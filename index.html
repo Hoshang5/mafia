@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>لعبة المافيا</title>
+  <title>لعبة المافيا - Mafia Game</title>
   
   <style>
     * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        font-family: system-ui, -apple-system, sans-serif;
+        font-family: system-ui, -apple-system, blinkmacsystemfont, 'Segoe UI', roboto, oxygen, ubuntu, cantarell, sans-serif;
     }
 
     html, body {
@@ -28,7 +28,7 @@
         width: 100%;
     }
 
-    /* شاشة الدخول */
+    /* شاشة الدخول وإنشاء الغرف */
     .login-overlay {
         position: fixed;
         inset: 0;
@@ -43,55 +43,91 @@
 
     .login-box {
         background-color: #151d2a;
-        padding: 24px;
-        border-radius: 12px;
+        padding: 28px;
+        border-radius: 16px;
         border: 1px solid #243044;
         width: 100%;
-        max-width: 320px;
+        max-width: 360px;
         text-align: center;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
     }
 
     .login-box h2 {
         color: #ef4444;
-        margin-bottom: 8px;
-        font-size: 1.4rem;
+        margin-bottom: 6px;
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
     }
 
     .login-box p {
         color: #64748b;
-        font-size: 0.8rem;
-        margin-bottom: 16px;
+        font-size: 0.85rem;
+        margin-bottom: 20px;
     }
 
     .login-box input {
         width: 100%;
         background-color: #0b0f19;
         border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 10px;
+        border-radius: 10px;
+        padding: 12px;
         color: white;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         outline: none;
         margin-bottom: 12px;
         text-align: center;
+        transition: border-color 0.2s;
     }
 
-    .login-box button {
-        width: 100%;
+    .login-box input:focus {
+        border-color: #ef4444;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 6px;
+    }
+
+    .btn-primary {
+        flex: 1;
         background-color: #dc2626;
         color: white;
         border: none;
-        padding: 10px;
-        border-radius: 8px;
+        padding: 12px;
+        border-radius: 10px;
         font-weight: bold;
         font-size: 0.9rem;
         cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #b91c1c;
+    }
+
+    .btn-secondary {
+        flex: 1;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .btn-secondary:hover {
+        background-color: #1d4ed8;
     }
 
     /* الشريط العلوي */
     header {
         background-color: #151d2a;
-        padding: 10px 14px;
+        padding: 10px 16px;
         border-bottom: 1px solid #243044;
         display: flex;
         justify-content: space-between;
@@ -101,21 +137,25 @@
 
     .room-info h1 {
         color: #ef4444;
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .room-info p {
         color: #64748b;
-        font-size: 0.7rem;
+        font-size: 0.75rem;
+        cursor: pointer;
     }
 
     .role-badge {
         background-color: #1e293b;
-        padding: 4px 10px;
-        border-radius: 6px;
+        padding: 6px 12px;
+        border-radius: 8px;
         border: 1px solid #334155;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: #94a3b8;
     }
 
@@ -131,24 +171,25 @@
     .phase-tag {
         background-color: #312e81;
         color: #a5b4fc;
-        font-size: 0.65rem;
-        padding: 2px 6px;
-        border-radius: 10px;
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 12px;
         display: block;
         margin-bottom: 2px;
+        font-weight: 600;
     }
 
     .timer {
-        font-size: 0.95rem;
+        font-size: 1.1rem;
         font-weight: bold;
         color: #ef4444;
         font-family: monospace;
     }
 
-    /* شريط اللاعبين */
+    /* شريط التحكم واللاعبين */
     .players-bar {
         background-color: #0f172a;
-        padding: 8px 12px;
+        padding: 10px 14px;
         border-bottom: 1px solid #1e293b;
         overflow-x: auto;
         white-space: nowrap;
@@ -164,13 +205,13 @@
 
     .player-card {
         background-color: #1e293b;
-        padding: 6px 10px;
+        padding: 6px 12px;
         border-radius: 8px;
         display: inline-flex;
         align-items: center;
         gap: 8px;
         flex-shrink: 0;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         border: 1px solid #334155;
     }
 
@@ -185,9 +226,9 @@
         background-color: #dc2626;
         color: white;
         border: none;
-        padding: 3px 8px;
-        border-radius: 4px;
-        font-size: 0.7rem;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.75rem;
         cursor: pointer;
     }
 
@@ -205,9 +246,9 @@
         background-color: #16a34a;
         color: white;
         border: none;
-        padding: 6px 12px;
+        padding: 8px 14px;
         border-radius: 8px;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         font-weight: bold;
         flex-shrink: 0;
         cursor: pointer;
@@ -217,14 +258,25 @@
         background-color: #475569;
         color: white;
         border: none;
-        padding: 6px 10px;
+        padding: 8px 12px;
         border-radius: 8px;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         flex-shrink: 0;
         cursor: pointer;
     }
 
-    /* منطقة الشات */
+    .leave-btn-sm {
+        background-color: #991b1b;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        cursor: pointer;
+    }
+
+    /* منطقة المحادثة */
     main {
         flex: 1;
         display: flex;
@@ -236,11 +288,11 @@
 
     .chat-box {
         flex: 1;
-        padding: 12px;
+        padding: 14px;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
     }
 
     .system-msg {
@@ -250,21 +302,22 @@
 
     .system-msg span {
         background-color: #151d2a;
-        color: #e2e8f0;
-        font-size: 0.75rem;
-        padding: 5px 12px;
-        border-radius: 12px;
-        border: 1px solid #334155;
+        color: #94a3b8;
+        font-size: 0.8rem;
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid #243044;
         display: inline-block;
     }
 
     .message {
         background-color: #1e293b;
-        padding: 8px 12px;
-        border-radius: 10px;
+        padding: 10px 14px;
+        border-radius: 12px;
         max-width: 80%;
         width: fit-content;
         align-self: flex-start;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .message.my-message {
@@ -274,32 +327,32 @@
     }
 
     .sender-other {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: bold;
         color: #818cf8;
-        margin-bottom: 2px;
+        margin-bottom: 4px;
         display: block;
     }
 
     .sender-me {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: bold;
         color: #facc15;
-        margin-bottom: 2px;
+        margin-bottom: 4px;
         display: block;
     }
 
     .message p {
-        font-size: 0.85rem;
-        line-height: 1.3;
+        font-size: 0.9rem;
+        line-height: 1.4;
     }
 
     .chat-input-area {
-        padding: 8px;
+        padding: 10px 14px;
         background-color: #151d2a;
         border-top: 1px solid #243044;
         display: flex;
-        gap: 8px;
+        gap: 10px;
         flex-shrink: 0;
     }
 
@@ -307,10 +360,10 @@
         flex: 1;
         background-color: #0b0f19;
         border: 1px solid #334155;
-        border-radius: 8px;
-        padding: 8px 12px;
+        border-radius: 10px;
+        padding: 10px 14px;
         color: white;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         outline: none;
     }
 
@@ -323,10 +376,10 @@
         background-color: #4f46e5;
         color: white;
         border: none;
-        padding: 8px 16px;
-        border-radius: 8px;
+        padding: 10px 20px;
+        border-radius: 10px;
         font-weight: bold;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         cursor: pointer;
     }
 
@@ -342,12 +395,19 @@
 </head>
 <body>
 
+  <!-- شاشة الدخول وإنشاء/الانضمام لغرفة -->
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
       <h2>لعبة المافيا</h2>
-      <p>أدخل اسمك للانضمام إلى الغرفة (4-12 لاعب)</p>
-      <input type="text" id="usernameInput" placeholder="اسمك باللعبة..." maxlength="15">
-      <button id="joinBtn">انضمام للغرفة</button>
+      <p>أدخل اسمك ورمز الغرفة للانضمام أو أنشئ غرفة جديدة (4-12 لاعب)</p>
+      
+      <input type="text" id="usernameInput" placeholder="اسمك في اللعبة..." maxlength="15">
+      <input type="text" id="roomIdInput" placeholder="رمز الغرفة (مثل 4829)..." maxlength="6">
+      
+      <div class="btn-group">
+        <button class="btn-primary" id="joinBtn">انضمام لغرفة</button>
+        <button class="btn-secondary" id="createBtn">إنشاء غرفة</button>
+      </div>
     </div>
   </div>
 
@@ -355,7 +415,7 @@
     <header>
       <div class="room-info">
         <h1>المافيا</h1>
-        <p>غرفة #1234</p>
+        <p id="roomCodeDisplay">الغرفة: ----</p>
       </div>
 
       <div class="role-badge">
@@ -371,12 +431,13 @@
     <div class="players-bar" id="playersBar">
       <button class="start-btn-sm" id="startGameBtn">بدء اللعبة (4-12)</button>
       <button class="reset-btn-sm" id="resetGameBtn">إعادة ضبط</button>
+      <button class="leave-btn-sm" id="leaveRoomBtn">خروج</button>
     </div>
 
     <main>
       <div class="chat-box" id="chatBox">
         <div class="system-msg">
-          <span>مرحباً بك في غرفة لعبة المافيا!</span>
+          <span>مرحباً بك في لعبة المافيا!</span>
         </div>
       </div>
 
@@ -400,11 +461,14 @@
 
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
-    const roomRef = database.ref('rooms/1234');
 
+    // العناصر
     const loginOverlay = document.getElementById('loginOverlay');
     const usernameInput = document.getElementById('usernameInput');
+    const roomIdInput = document.getElementById('roomIdInput');
     const joinBtn = document.getElementById('joinBtn');
+    const createBtn = document.getElementById('createBtn');
+    const roomCodeDisplay = document.getElementById('roomCodeDisplay');
     const chatForm = document.getElementById('chatForm');
     const chatInput = document.getElementById('chatInput');
     const sendBtn = document.getElementById('sendBtn');
@@ -412,49 +476,222 @@
     const playersBar = document.getElementById('playersBar');
     const startGameBtn = document.getElementById('startGameBtn');
     const resetGameBtn = document.getElementById('resetGameBtn');
+    const leaveRoomBtn = document.getElementById('leaveRoomBtn');
     const phaseDisplay = document.getElementById('phaseDisplay');
     const timerDisplay = document.getElementById('timerDisplay');
     const myRoleDisplay = document.getElementById('myRoleDisplay');
 
     let currentUsername = "";
+    let currentRoomId = "";
     let myPlayerKey = "";
     let myRole = "في الانتظار";
     let isAlive = true;
     let currentPhase = "waiting";
+    let roomRef = null;
 
-    // الانضمام مع فحص الحد الأقصى (12 لاعب)
-    joinBtn.addEventListener('click', () => {
-      const name = usernameInput.value.trim();
-      if (name !== "") {
-        roomRef.child('players').once('value', (snapshot) => {
-          const players = snapshot.val();
-          if (players && Object.keys(players).length >= 12) {
-            alert("الغرفة ممتلئة بالكامل! الحد الأقصى هو 12 لاعباً.");
-            return;
+    // استعادة الجلسة في حال الـ Refresh
+    window.addEventListener('load', () => {
+      const savedUser = localStorage.getItem('mafia_username');
+      const savedRoom = localStorage.getItem('mafia_room_id');
+      const savedKey = localStorage.getItem('mafia_player_key');
+
+      if (savedUser && savedRoom && savedKey) {
+        currentUsername = savedUser;
+        currentRoomId = savedRoom;
+        myPlayerKey = savedKey;
+        
+        // التحقق من وجود الغرفة واللاعب في الفايربيس
+        database.ref(`rooms/${currentRoomId}/players/${myPlayerKey}`).once('value', (snap) => {
+          if (snap.exists()) {
+            setupRoomListeners(currentRoomId);
+            loginOverlay.style.display = 'none';
+          } else {
+            clearLocalStorage();
           }
-
-          currentUsername = name;
-          const newPlayerRef = roomRef.child('players').push();
-          myPlayerKey = newPlayerRef.key;
-
-          newPlayerRef.set({
-            name: currentUsername,
-            role: "مواطن",
-            isAlive: true,
-            votes: 0
-          });
-
-          newPlayerRef.onDisconnect().remove();
-          loginOverlay.style.display = 'none';
         });
       }
     });
+
+    function clearLocalStorage() {
+      localStorage.removeItem('mafia_username');
+      localStorage.removeItem('mafia_room_id');
+      localStorage.removeItem('mafia_player_key');
+    }
+
+    // إنشاء غرفة جديدة
+    createBtn.addEventListener('click', () => {
+      const name = usernameInput.value.trim();
+      if (!name) {
+        alert("يرجى إدخال اسمك أولاً!");
+        return;
+      }
+      
+      const newRoomCode = Math.floor(1000 + Math.random() * 9000).toString();
+      joinOrCreateRoom(name, newRoomCode, true);
+    });
+
+    // الانضمام لغرفة
+    joinBtn.addEventListener('click', () => {
+      const name = usernameInput.value.trim();
+      const code = roomIdInput.value.trim();
+
+      if (!name || !code) {
+        alert("يرجى إدخال اسمك ورمز الغرفة!");
+        return;
+      }
+
+      joinOrCreateRoom(name, code, false);
+    });
+
+    function joinOrCreateRoom(name, roomCode, isCreating) {
+      const targetRoomRef = database.ref(`rooms/${roomCode}`);
+      
+      targetRoomRef.once('value', (snapshot) => {
+        const roomData = snapshot.val();
+        
+        if (!isCreating && !roomData) {
+          alert("الغرفة غير موجودة! تحقق من الرمز.");
+          return;
+        }
+
+        const players = roomData ? roomData.players : null;
+        if (players && Object.keys(players).length >= 12) {
+          alert("الغرفة ممتلئة بالكامل! الحد الأقصى هو 12 لاعباً.");
+          return;
+        }
+
+        currentUsername = name;
+        currentRoomId = roomCode;
+
+        const newPlayerRef = targetRoomRef.child('players').push();
+        myPlayerKey = newPlayerRef.key;
+
+        newPlayerRef.set({
+          name: currentUsername,
+          role: "مواطن",
+          isAlive: true,
+          votes: 0
+        });
+
+        newPlayerRef.onDisconnect().remove();
+
+        // حفظ البيانات محلياً لمنع طلبها بعد الـ Refresh
+        localStorage.setItem('mafia_username', currentUsername);
+        localStorage.setItem('mafia_room_id', currentRoomId);
+        localStorage.setItem('mafia_player_key', myPlayerKey);
+
+        loginOverlay.style.display = 'none';
+        setupRoomListeners(currentRoomId);
+      });
+    }
+
+    // إعداد الاستماع للغرفة الحالية
+    function setupRoomListeners(roomId) {
+      if (roomRef) roomRef.off();
+
+      roomRef = database.ref(`rooms/${roomId}`);
+      roomCodeDisplay.textContent = `الغرفة: #${roomId}`;
+
+      // استقبال الرسائل
+      chatBox.innerHTML = '<div class="system-msg"><span>انضممت إلى الغرفة #' + roomId + '</span></div>';
+      
+      roomRef.child('messages').off();
+      roomRef.child('messages').on('child_added', (snapshot) => {
+        const data = snapshot.val();
+        const msgDiv = document.createElement('div');
+        
+        if (data.isSystem) {
+          msgDiv.className = 'system-msg';
+          msgDiv.innerHTML = `<span>${data.text}</span>`;
+        } else {
+          const isMe = data.sender === currentUsername;
+          msgDiv.classList.add('message');
+          if (isMe) {
+            msgDiv.classList.add('my-message');
+            msgDiv.innerHTML = `<span class="sender-me">${data.sender}</span><p>${data.text}</p>`;
+          } else {
+            msgDiv.innerHTML = `<span class="sender-other">${data.sender}</span><p>${data.text}</p>`;
+          }
+        }
+
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      });
+
+      // متابعة حالة الغرفة والعداد
+      roomRef.on('value', (snapshot) => {
+        const roomData = snapshot.val();
+        if (!roomData) return;
+
+        currentPhase = roomData.status || "waiting";
+        const timer = roomData.timer || 0;
+
+        if (currentPhase === "waiting") {
+          phaseDisplay.textContent = "الانتظار";
+          enableChat(true);
+        } else if (currentPhase === "night") {
+          phaseDisplay.textContent = "الليل 🌙";
+          enableChat(myRole === "مافيا" && isAlive);
+        } else if (currentPhase === "day") {
+          phaseDisplay.textContent = "النهار ☀️";
+          enableChat(isAlive);
+        } else if (currentPhase === "voting") {
+          phaseDisplay.textContent = "التصويت 🗳️";
+          enableChat(isAlive);
+        }
+
+        // تنسيق التوقيت MM:SS
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+        timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      });
+
+      // متابعة قリスト اللاعبين والأزرار
+      roomRef.child('players').on('value', (snapshot) => {
+        const players = snapshot.val();
+        
+        if (players && myPlayerKey && players[myPlayerKey]) {
+          myRole = players[myPlayerKey].role;
+          isAlive = players[myPlayerKey].isAlive;
+          myRoleDisplay.textContent = myRole;
+        }
+
+        const cards = playersBar.querySelectorAll('.player-card');
+        cards.forEach(card => card.remove());
+
+        if (players) {
+          Object.keys(players).forEach(key => {
+            const player = players[key];
+            const playerCard = document.createElement('div');
+            playerCard.className = `player-card ${player.isAlive ? '' : 'dead'}`;
+            
+            let actionBtnHTML = '';
+            if (player.isAlive && isAlive) {
+              if (currentPhase === "night") {
+                if (myRole === "مافيا" && key !== myPlayerKey) {
+                  actionBtnHTML = `<button class="action-btn-sm" onclick="handleAction('${key}')">قتل (${player.votes || 0})</button>`;
+                } else if (myRole === "طبيب") {
+                  actionBtnHTML = `<button class="action-btn-sm doctor" onclick="handleAction('${key}')">حماية</button>`;
+                } else if (myRole === "محقق" && key !== myPlayerKey) {
+                  actionBtnHTML = `<button class="action-btn-sm detective" onclick="handleAction('${key}')">كشف</button>`;
+                }
+              } else if (currentPhase === "voting" && key !== myPlayerKey) {
+                actionBtnHTML = `<button class="action-btn-sm" onclick="handleAction('${key}')">تصويت (${player.votes || 0})</button>`;
+              }
+            }
+
+            playerCard.innerHTML = `<span>${player.name}</span> ${actionBtnHTML}`;
+            playersBar.appendChild(playerCard);
+          });
+        }
+      });
+    }
 
     // إرسال الرسائل
     chatForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = chatInput.value.trim();
-      if (text !== "" && currentUsername !== "" && isAlive) {
+      if (text !== "" && currentUsername !== "" && isAlive && roomRef) {
         if (currentPhase === "night" && myRole !== "مافيا") return;
 
         roomRef.child('messages').push({
@@ -466,31 +703,10 @@
       }
     });
 
-    // عرض الرسائل
-    roomRef.child('messages').on('child_added', (snapshot) => {
-      const data = snapshot.val();
-      const msgDiv = document.createElement('div');
-      
-      if (data.isSystem) {
-        msgDiv.className = 'system-msg';
-        msgDiv.innerHTML = `<span>${data.text}</span>`;
-      } else {
-        const isMe = data.sender === currentUsername;
-        msgDiv.classList.add('message');
-        if (isMe) {
-          msgDiv.classList.add('my-message');
-          msgDiv.innerHTML = `<span class="sender-me">${data.sender}</span><p>${data.text}</p>`;
-        } else {
-          msgDiv.innerHTML = `<span class="sender-other">${data.sender}</span><p>${data.text}</p>`;
-        }
-      }
-
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    });
-
-    // بدء اللعبة (شرط من 4 إلى 12 لاعب)
+    // بدء اللعبة (التوقيت: 300 ثانية / 5 دقائق لكل من الليل والنهار)
     startGameBtn.addEventListener('click', () => {
+      if (!roomRef) return;
+      
       roomRef.child('players').once('value', (snapshot) => {
         const players = snapshot.val();
         if (!players) return;
@@ -510,13 +726,10 @@
 
         const shuffledKeys = playerKeys.sort(() => Math.random() - 0.5);
 
-        // توزيع الأدوار تلقائياً حسَب عدد اللاعبين:
-        // 4-7 لاعبين: 1 مافيا، 1 محقق، 1 طبيب، والباقي مواطنين
-        // 8-12 لاعب: 2 مافيا، 1 محقق، 1 طبيب، والباقي مواطنين
         shuffledKeys.forEach((key, index) => {
           let assignedRole = "مواطن";
           if (index === 0) assignedRole = "مافيا";
-          else if (index === 1 && count >= 8) assignedRole = "مافيا"; // مافيا ثاني للغرف الكبيرة
+          else if (index === 1 && count >= 8) assignedRole = "مافيا";
           else if (index === (count >= 8 ? 2 : 1)) assignedRole = "محقق";
           else if (index === (count >= 8 ? 3 : 2)) assignedRole = "طبيب";
 
@@ -530,25 +743,37 @@
         roomRef.child('messages').remove();
         roomRef.child('nightActions').remove();
 
-        startPhase("night", 30, "🌙 بدأ الليل! المافيا تختار الضحية، الطبيب يحمي، والمحقق يفحص...");
+        // 300 ثانية = 5 دقائق لليل
+        startPhase("night", 300, "🌙 بدأ الليل! (5 دقائق) المافيا تختار الضحية، الطبيب يحمي، والمحقق يفحص...");
       });
     });
 
     // إعادة الضبط
     resetGameBtn.addEventListener('click', () => {
+      if (!roomRef) return;
       roomRef.update({
         status: "waiting",
         timer: 0
       });
       roomRef.child('nightActions').remove();
       roomRef.child('messages').push({
-        text: "تم إعادة ضبط الغرفة.",
+        text: "تم إعادة ضبط الغرفة من قبل أحد اللاعبين.",
         isSystem: true
       });
     });
 
-    // إدارة المراحل
+    // الخروج من الغرفة
+    leaveRoomBtn.addEventListener('click', () => {
+      if (roomRef && myPlayerKey) {
+        roomRef.child(`players/${myPlayerKey}`).remove();
+      }
+      clearLocalStorage();
+      location.reload();
+    });
+
     function startPhase(phaseName, duration, sysMessage) {
+      if (!roomRef) return;
+      
       roomRef.update({
         status: phaseName,
         timer: duration
@@ -569,80 +794,15 @@
       });
     }
 
-    // الاستماع لحالة الغرفة
-    roomRef.on('value', (snapshot) => {
-      const roomData = snapshot.val();
-      if (!roomData) return;
-
-      currentPhase = roomData.status || "waiting";
-      const timer = roomData.timer || 0;
-
-      if (currentPhase === "waiting") {
-        phaseDisplay.textContent = "الانتظار";
-        enableChat(true);
-      } else if (currentPhase === "night") {
-        phaseDisplay.textContent = "الليل 🌙";
-        enableChat(myRole === "مافيا" && isAlive);
-      } else if (currentPhase === "day") {
-        phaseDisplay.textContent = "النهار ☀️";
-        enableChat(isAlive);
-      } else if (currentPhase === "voting") {
-        phaseDisplay.textContent = "التصويت 🗳️";
-        enableChat(isAlive);
-      }
-
-      timerDisplay.textContent = timer < 10 ? `00:0${timer}` : `00:${timer}`;
-    });
-
     function enableChat(enable) {
       chatInput.disabled = !enable;
       sendBtn.disabled = !enable;
       chatInput.placeholder = enable ? "اكتب رسالتك..." : "الشات مغلق حالياً...";
     }
 
-    // متابعة اللاعبين والأزرار
-    roomRef.child('players').on('value', (snapshot) => {
-      const players = snapshot.val();
-      
-      if (players && myPlayerKey && players[myPlayerKey]) {
-        myRole = players[myPlayerKey].role;
-        isAlive = players[myPlayerKey].isAlive;
-        myRoleDisplay.textContent = myRole;
-      }
-
-      const cards = playersBar.querySelectorAll('.player-card');
-      cards.forEach(card => card.remove());
-
-      if (players) {
-        Object.keys(players).forEach(key => {
-          const player = players[key];
-          const playerCard = document.createElement('div');
-          playerCard.className = `player-card ${player.isAlive ? '' : 'dead'}`;
-          
-          let actionBtnHTML = '';
-          if (player.isAlive && isAlive) {
-            if (currentPhase === "night") {
-              if (myRole === "مافيا" && key !== myPlayerKey) {
-                actionBtnHTML = `<button class="action-btn-sm" onclick="handleAction('${key}')">قتل (${player.votes || 0})</button>`;
-              } else if (myRole === "طبيب") {
-                actionBtnHTML = `<button class="action-btn-sm doctor" onclick="handleAction('${key}')">حماية</button>`;
-              } else if (myRole === "محقق" && key !== myPlayerKey) {
-                actionBtnHTML = `<button class="action-btn-sm detective" onclick="handleAction('${key}')">كشف</button>`;
-              }
-            } else if (currentPhase === "voting" && key !== myPlayerKey) {
-              actionBtnHTML = `<button class="action-btn-sm" onclick="handleAction('${key}')">تصويت (${player.votes || 0})</button>`;
-            }
-          }
-
-          playerCard.innerHTML = `<span>${player.name}</span> ${actionBtnHTML}`;
-          playersBar.appendChild(playerCard);
-        });
-      }
-    });
-
-    // تفاعل الأزرار حسَب الدور والمرحلة
+    // تنفيذ الأفعال
     window.handleAction = function(targetKey) {
-      if (!isAlive) return;
+      if (!isAlive || !roomRef) return;
 
       if (currentPhase === "night") {
         if (myRole === "مافيا") {
@@ -661,8 +821,9 @@
       }
     };
 
-    // العداد وحساب انتهاء المراحل
+    // العداد التنازلي
     setInterval(() => {
+      if (!roomRef) return;
       roomRef.child('timer').transaction((t) => (t > 0 ? t - 1 : t), (err, committed, snap) => {
         if (committed && snap.val() === 0) {
           handlePhaseTimeout();
@@ -674,7 +835,8 @@
       if (currentPhase === "night") {
         resolveNightActions();
       } else if (currentPhase === "day") {
-        startPhase("voting", 20, "🗳️ حان وقت التصويت النهائي لحظر المتهم!");
+        // 120 ثانية = دقيقتان للتصويت
+        startPhase("voting", 120, "🗳️ حان وقت التصويت! (دقيقتان) اختر المتهم لإعدامه.");
       } else if (currentPhase === "voting") {
         resolveVoting();
       }
@@ -698,13 +860,14 @@
           }
         });
 
+        // 300 ثانية = 5 دقائق للنهار
         if (victimKey && victimKey !== healedKey) {
           roomRef.child(`players/${victimKey}`).update({ isAlive: false });
-          startPhase("day", 45, `☀️ أشرقت الشمس! تم القضاء على: ${players[victimKey].name}`);
+          startPhase("day", 300, `☀️ أشرقت الشمس! (5 دقائق مناقشة) تم القضاء على: ${players[victimKey].name}`);
         } else if (victimKey && victimKey === healedKey) {
-          startPhase("day", 45, "☀️ أشرقت الشمس! حاول المافيا القتل ولكن الطبيب أنقذ الضحية!");
+          startPhase("day", 300, "☀️ أشرقت الشمس! (5 دقائق مناقشة) حاول المافيا القتل ولكن الطبيب أنقذ الضحية!");
         } else {
-          startPhase("day", 45, "☀️ أشرقت الشمس! لم يمت أحد الليلة.");
+          startPhase("day", 300, "☀️ أشرقت الشمس! (5 دقائق مناقشة) لم يمت أحد الليلة.");
         }
       });
     }
@@ -724,11 +887,12 @@
           }
         });
 
+        // 300 ثانية = 5 دقائق للليل التالي
         if (victimKey) {
           roomRef.child(`players/${victimKey}`).update({ isAlive: false });
-          startPhase("night", 30, `🗳️ تم إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
+          startPhase("night", 300, `🗳️ تم إعدام: ${players[victimKey].name}. حلّ الليل مجدداً (5 دقائق)...`);
         } else {
-          startPhase("night", 30, "🗳️ لم يتم التوصل لقرار. حلّ الليل مجدداً...");
+          startPhase("night", 300, "🗳️ لم يتم التوصل لقرار. حلّ الليل مجدداً (5 دقائق)...");
         }
       });
     }

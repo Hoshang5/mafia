@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>لعبة المافيا  - Mafia Game</title>
+  <title>لعبة المافيا المحمية - Mafia Game</title>
   
   <style>
     * {
@@ -361,7 +361,7 @@
 
   <div class="login-overlay" id="loginOverlay">
     <div class="login-box">
-      <h2>لعبة المافيا </h2>
+      <h2>لعبة المافيا المحمية</h2>
       <p>أدخل اسمك ورمز الغرفة للانضمام أو أنشئ غرفة جديدة</p>
       <input type="text" id="usernameInput" placeholder="اسمك في اللعبة..." maxlength="15">
       <input type="text" id="roomIdInput" placeholder="رمز الغرفة (مثل 4829)..." maxlength="6">
@@ -571,6 +571,16 @@
         
         database.ref(`rooms/${currentRoomId}/players/${myPlayerKey}`).once('value', (snap) => {
           if (snap.exists()) {
+            // تحديث حالة الاتصال وإعادة تفعيل الـ onDisconnect لتعيين online إلى false بدلاً من الحذف
+            const playerRef = database.ref(`rooms/${currentRoomId}/players/${myPlayerKey}`);
+            playerRef.update({ online: true });
+            
+            database.ref('.info/connected').on('value', (connectedSnap) => {
+              if (connectedSnap.val() === true) {
+                playerRef.child('online').onDisconnect().set(false);
+              }
+            });
+
             setupRoomListeners(currentRoomId);
             loginOverlay.style.display = 'none';
           } else {
@@ -634,8 +644,6 @@
               myPresenceRef.set(true);
             }
           });
-
-          newPlayerRef.onDisconnect().remove().then(() => reassignHostIfNeeded(roomCode));
 
           localStorage.setItem('mafia_username', currentUsername);
           localStorage.setItem('mafia_room_id', currentRoomId);
@@ -969,7 +977,6 @@
       chatInput.value = "";
     });
 
-    // تعديل بدء اللعبة محلياً بواسطة المضيف (مجاني تماماً بدون Cloud Functions)
     startGameBtn.addEventListener('click', () => {
       if (!roomRef || !isHost) return;
       

@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>لعبة المافيا - Mafia Game</title>
   
   <style>
@@ -15,6 +15,7 @@
 
     html, body {
         height: 100%;
+        height: 100dvh;
         width: 100%;
         background-color: #0b0f19;
         color: #f8fafc;
@@ -24,7 +25,8 @@
     .app-container {
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: 100%;
+        height: 100dvh;
         width: 100%;
     }
 
@@ -270,9 +272,9 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         overflow: hidden;
         background-color: #0b0f19;
+        min-height: 0;
     }
 
     .chat-box {
@@ -282,6 +284,7 @@
         display: flex;
         flex-direction: column;
         gap: 12px;
+        min-height: 0;
     }
 
     .system-msg {
@@ -338,6 +341,7 @@
 
     .chat-input-area {
         padding: 10px 14px;
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
         background-color: #151d2a;
         border-top: 1px solid #243044;
         display: flex;
@@ -435,11 +439,6 @@
     .modal-opt-btn:hover {
         background-color: #334155;
     }
-
-    .modal-opt-btn.selected {
-        background-color: #2563eb;
-        border-color: #60a5fa;
-    }
   </style>
 
   <!-- Firebase v8 -->
@@ -524,7 +523,6 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // العناصر
     const loginOverlay = document.getElementById('loginOverlay');
     const usernameInput = document.getElementById('usernameInput');
     const roomIdInput = document.getElementById('roomIdInput');
@@ -557,7 +555,6 @@
     let isHost = false;
     let hasActedThisNight = false;
 
-    // استعادة الجلسة تلقائياً في حال الـ Refresh أو فتح الصفحة من جديد
     window.addEventListener('load', () => {
       const savedUser = localStorage.getItem('mafia_username');
       const savedRoom = localStorage.getItem('mafia_room_id');
@@ -585,7 +582,6 @@
       localStorage.removeItem('mafia_player_key');
     }
 
-    // إنشاء غرفة جديدة
     createBtn.addEventListener('click', () => {
       const name = usernameInput.value.trim();
       if (!name) {
@@ -596,7 +592,6 @@
       joinOrCreateRoom(name, newRoomCode, true);
     });
 
-    // الانضمام لغرفة
     joinBtn.addEventListener('click', () => {
       const name = usernameInput.value.trim();
       const code = roomIdInput.value.trim();
@@ -653,7 +648,6 @@
       });
     }
 
-    // إعداد الاستماع للغرفة الحالية
     function setupRoomListeners(roomId) {
       if (roomRef) roomRef.off();
 
@@ -685,7 +679,6 @@
         chatBox.scrollTop = chatBox.scrollHeight;
       });
 
-      // متابعة حالة الغرفة والعداد
       roomRef.on('value', (snapshot) => {
         const roomData = snapshot.val();
         if (!roomData) return;
@@ -721,7 +714,6 @@
         timerDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
       });
 
-      // متابعة قائمة اللاعبين
       roomRef.child('players').on('value', (snapshot) => {
         const players = snapshot.val();
         
@@ -755,7 +747,6 @@
       });
     }
 
-    // إظهار النافذة التفاعلية المناسبة للأدوار الخاصة بليل
     function checkAndShowNightModal(players) {
       if (!isAlive || hasActedThisNight || !players) {
         roleModalOverlay.style.display = 'none';
@@ -834,14 +825,12 @@
       }
     }
 
-    // التصويت في مرحلة التصويت
     window.handleVote = function(targetKey) {
       if (!isAlive || currentPhase !== "voting" || !roomRef) return;
       roomRef.child(`players/${targetKey}/votes`).transaction(v => (v || 0) + 1);
       alert("تم تسجيل تصويتك!");
     };
 
-    // إرسال الرسائل
     chatForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const text = chatInput.value.trim();
@@ -857,7 +846,6 @@
       }
     });
 
-    // بدء اللعبة
     startGameBtn.addEventListener('click', () => {
       if (!roomRef) return;
       
@@ -901,7 +889,6 @@
       });
     });
 
-    // إعادة الضبط
     resetGameBtn.addEventListener('click', () => {
       if (!roomRef) return;
       roomRef.update({
@@ -915,7 +902,6 @@
       });
     });
 
-    // الخروج من الغرفة
     leaveRoomBtn.addEventListener('click', () => {
       if (roomRef && myPlayerKey) {
         roomRef.child(`players/${myPlayerKey}`).remove();
@@ -953,7 +939,6 @@
       chatInput.placeholder = enable ? "اكتب رسالتك..." : "الشات مغلق حالياً...";
     }
 
-    // إداري العداد (فقط من قِبل صاحب الغرفة Host لتجنب تسريع التوقيت)
     setInterval(() => {
       if (!roomRef || !isHost) return;
 
@@ -974,7 +959,6 @@
       }
     }
 
-    // المعالجة الشاملة عند انتهاء الليل وظهور النهار
     function resolveNightActions() {
       roomRef.once('value', (snapshot) => {
         const data = snapshot.val();
@@ -989,7 +973,6 @@
 
         let daySummary = "☀️ أشرقت الشمس!\n";
 
-        // أحداث القتل والحماية
         if (killedKey && killedKey !== healedKey) {
           roomRef.child(`players/${killedKey}`).update({ isAlive: false });
           daySummary += `❌ قامت المافيا باغتيال اللاعب: ${players[killedKey].name}.\n`;
@@ -999,7 +982,6 @@
           daySummary += `✨ مرّت الليلة بسلام ولم يمت أحد.\n`;
         }
 
-        // كشف نتيجة التحقيق في النهار
         if (investigatedData) {
           const statusText = investigatedData.isMafia ? "ينتمي للمافيا ⚠️" : "بريء (مواطن) ✅";
           daySummary += `🔍 تقرير المحقق: تم التحقيق مع (${investigatedData.targetName}) وتبين أنه ${statusText}`;

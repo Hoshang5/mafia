@@ -287,16 +287,6 @@
         box-shadow: 0 0 5px #22c55e;
     }
 
-    .action-btn-sm {
-        background-color: #dc2626;
-        color: white;
-        border: none;
-        padding: 3px 6px;
-        border-radius: 5px;
-        font-size: 0.7rem;
-        cursor: pointer;
-    }
-
     .start-btn-sm { background-color: #16a34a; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; align-items: center; gap: 4px; }
     .skip-btn-sm { background-color: #d97706; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.75rem; cursor: pointer; display: none; align-items: center; gap: 4px; }
     .reset-btn-sm { background-color: #475569; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; display: none; align-items: center; gap: 4px; }
@@ -975,6 +965,7 @@
           isHost = !!players[myPlayerKey].isHost;
           
           startGameBtn.style.display = isHost ? "inline-flex" : "none";
+          // التعديل هنا: زر تخطي الجولة يظهر للمضيف طالما أن الحالة ليست في وضع الانتظار
           skipPhaseBtn.style.display = (isHost && currentPhase !== "waiting") ? "inline-flex" : "none";
           resetGameBtn.style.display = isHost ? "inline-flex" : "none";
           hostVotingCloseContainer.style.display = isHost ? "block" : "none";

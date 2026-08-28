@@ -323,7 +323,7 @@
         border-radius: 16px;
         padding: 20px;
         width: 100%;
-        max-width: 340px;
+        max-width: 360px;
         text-align: center;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
     }
@@ -331,9 +331,45 @@
     .modal-card h3 { color: #facc15; font-size: 1.15rem; margin-bottom: 8px; }
     .modal-card p { color: #94a3b8; font-size: 0.85rem; margin-bottom: 14px; line-height: 1.4; white-space: pre-line; }
 
-    .modal-options { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; }
+    .modal-options { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto; }
     .modal-opt-btn { background-color: #1e293b; border: 1px solid #334155; color: white; padding: 8px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
     .close-btn { background-color: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-size: 0.85rem; width: 100%; font-weight: bold; }
+
+    /* أنماط نافذة التصويت الجماعية */
+    .voting-modal-content {
+        text-align: right;
+    }
+    .voting-target-item {
+        background-color: #1e293b;
+        border: 1px solid #334155;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .voting-target-info {
+        font-size: 0.85rem;
+    }
+    .voting-target-info span {
+        display: block;
+        color: #94a3b8;
+        font-size: 0.7rem;
+    }
+    .vote-action-btn {
+        background-color: #dc2626;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .vote-action-btn.voted {
+        background-color: #16a34a;
+    }
 
     .log-list {
         text-align: right;
@@ -410,6 +446,20 @@
       <h3 id="modalTitle">عنوان القرار</h3>
       <p id="modalDesc">تفاصيل القرار المطلوب...</p>
       <div class="modal-options" id="modalOptions"></div>
+    </div>
+  </div>
+
+  <!-- نافذة التصويت التفاعلية الجديدة (مثل Among Us) -->
+  <div class="modal-overlay" id="votingModalOverlay">
+    <div class="modal-card" style="max-width: 400px;">
+      <h3>🗳️ نافذة التصويت الجماعي</h3>
+      <p>شاهد أصوات الجميع، اختر شخصاً للتصويت له، ويمكنك تغيير صوتك في أي وقت:</p>
+      <div class="voting-modal-content" id="votingModalList" style="max-height: 260px; overflow-y: auto;">
+        <!-- قائمة التصويت يتم تعبئتها برمجياً -->
+      </div>
+      <div id="hostVotingCloseContainer" style="margin-top: 10px; display: none;">
+        <button class="close-btn" id="hostEndVotingBtn" style="background-color: #dc2626;">إنهاء التصويت (للهوست فقط)</button>
+      </div>
     </div>
   </div>
 
@@ -549,6 +599,12 @@
     const modalDesc = document.getElementById('modalDesc');
     const modalOptions = document.getElementById('modalOptions');
     const typingIndicatorBar = document.getElementById('typingIndicatorBar');
+    
+    // عناصر نافذة التصويت
+    const votingModalOverlay = document.getElementById('votingModalOverlay');
+    const votingModalList = document.getElementById('votingModalList');
+    const hostVotingCloseContainer = document.getElementById('hostVotingCloseContainer');
+    const hostEndVotingBtn = document.getElementById('hostEndVotingBtn');
 
     let currentUsername = "";
     let currentRoomId = "";
@@ -560,6 +616,7 @@
     let isHost = false;
     let hasActedThisNight = false;
     let playersCache = {};
+    let currentRoundNumber = 1; // تتبع رقم الجولة الحالية
     let typingTimeout = null;
 
     const roleDescriptions = {
@@ -774,6 +831,13 @@
         }
       });
 
+      // استماع لتغيرات أصوات التصويت لعرضها فوراً مثل Among Us
+      roomRef.child('votingData').on('value', (snap) => {
+        if (currentPhase === "voting") {
+          renderVotingModalContent();
+        }
+      });
+
       roomRef.on('value', (snapshot) => {
         const roomData = snapshot.val();
         if (!roomData) return;
@@ -781,6 +845,7 @@
         const prevPhase = currentPhase;
         currentPhase = roomData.status || "waiting";
         const timer = roomData.timer || 0;
+        currentRoundNumber = roomData.roundNumber || 1;
 
         if (prevPhase !== currentPhase) {
           hasActedThisNight = false;
@@ -788,11 +853,17 @@
           if (currentPhase === "night") {
             SoundEffects.playNightSound();
             showPhaseBanner("🌙 حلّ الليل", "الأدوار السرية تنفذ مهامها الآن");
+            votingModalOverlay.style.display = 'none';
           } else if (currentPhase === "day") {
             SoundEffects.playDaySound();
             showPhaseBanner("☀️ أشرقت الشمس", "استيقظ الجميع للنقاش");
+            votingModalOverlay.style.display = 'none';
           } else if (currentPhase === "voting") {
             showPhaseBanner("🗳️ بدء التصويت", "حان وقت اختيار من يتم إعدامه");
+            if (isAlive) {
+              votingModalOverlay.style.display = 'flex';
+              renderVotingModalContent();
+            }
           }
         }
 
@@ -802,6 +873,7 @@
           phaseDisplay.textContent = "الانتظار";
           document.body.style.backgroundColor = "#0b0f19";
           roleModalOverlay.style.display = 'none';
+          votingModalOverlay.style.display = 'none';
         } else if (currentPhase === "night") {
           phaseDisplay.textContent = "الليل 🌙";
           document.body.style.backgroundColor = "#030712";
@@ -842,6 +914,7 @@
           startGameBtn.style.display = isHost ? "inline-block" : "none";
           skipPhaseBtn.style.display = (isHost && currentPhase !== "waiting") ? "inline-block" : "none";
           resetGameBtn.style.display = isHost ? "inline-block" : "none";
+          hostVotingCloseContainer.style.display = isHost ? "block" : "none";
         }
 
         updateChatPermissions();
@@ -855,21 +928,17 @@
             const playerCard = document.createElement('div');
             playerCard.className = `player-card ${player.isAlive ? '' : 'dead'}`;
             
-            let actionBtnHTML = '';
-            if (player.isAlive && isAlive && key !== myPlayerKey) {
-              if (currentPhase === "voting") {
-                actionBtnHTML = `<button class="action-btn-sm" onclick="handleVote('${key}')">تصويت (${player.votes || 0})</button>`;
-              }
-            }
-
             const isOnline = player.online !== false;
             playerCard.innerHTML = `
               <span class="status-dot ${isOnline ? 'online' : ''}"></span>
-              <span>${player.name} ${player.isHost ? '👑' : ''}</span> 
-              ${actionBtnHTML}
+              <span>${player.name} ${player.isHost ? '👑' : ''}</span>
             `;
             playersBar.appendChild(playerCard);
           });
+        }
+        
+        if (currentPhase === "voting" && votingModalOverlay.style.display === 'flex') {
+          renderVotingModalContent();
         }
       });
     }
@@ -908,7 +977,8 @@
     }
 
     function checkAndShowNightModal(players) {
-      if (!isAlive || hasActedThisNight || !players) {
+      // الشرط الجديد: الجولة الأولى لا يُسمح للمافيا والكل بالتحرك أو القتل أو الحماية
+      if (!isAlive || hasActedThisNight || !players || currentRoundNumber === 1) {
         roleModalOverlay.style.display = 'none';
         return;
       }
@@ -983,17 +1053,81 @@
       }
     }
 
-    window.handleVote = function(targetKey) {
+    // دوال عرض وتحديث التصويت الجماعي (مثل Among Us مع ميزة تغيير الصوت)
+    function renderVotingModalContent() {
+      roomRef.once('value', (snap) => {
+        const data = snap.val();
+        if (!data || !data.players) return;
+        const players = data.players;
+        const votingData = data.votingData || {}; // يشمل كل مفتاح لاعب والشخص الذي صوت له
+
+        // حساب عدد الأصوات لكل لاعب من خلال جدول votingData
+        const voteCounts = {};
+        // لتتبع من صوت لمن: { voterKey: targetKey }
+        const votesMapping = {};
+
+        Object.keys(votingData).forEach(voterKey => {
+          const targetKey = votingData[voterKey];
+          votesMapping[voterKey] = targetKey;
+          voteCounts[targetKey] = (voteCounts[targetKey] || 0) + 1;
+        });
+
+        votingModalList.innerHTML = '';
+
+        Object.keys(players).forEach(targetKey => {
+          const player = players[targetKey];
+          if (!player.isAlive) return;
+
+          const count = voteCounts[targetKey] || 0;
+          
+          // تجميع أسماء المصوتين على هذا الشخص لعرض من المصوت على من في نفس الوقت
+          const votersListNames = [];
+          Object.keys(votesMapping).forEach(voterKey => {
+            if (votesMapping[voterKey] === targetKey && players[voterKey]) {
+              votersListNames.push(players[voterKey].name);
+            }
+          });
+
+          const isMyTarget = (votesMapping[myPlayerKey] === targetKey);
+
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'voting-target-item';
+          
+          let actionBtnHTML = '';
+          if (isAlive && targetKey !== myPlayerKey) {
+            actionBtnHTML = `<button class="vote-action-btn ${isMyTarget ? 'voted' : ''}" onclick="handleVoteAction('${targetKey}')">
+              ${isMyTarget ? 'تم التصويت ✓ (تغيير)' : 'تصويت'}
+            </button>`;
+          } else if (targetKey === myPlayerKey && isAlive) {
+            actionBtnHTML = `<span style="font-size:0.7rem; color:#64748b;">(لا يمكنك التصويت لنفسك)</span>`;
+          }
+
+          itemDiv.innerHTML = `
+            <div class="voting-target-info">
+              <strong>${player.name}</strong> 
+              <span>عدد الأصوات: ${count} ${votersListNames.length > 0 ? '(' + votersListNames.join(', ') + ')' : ''}</span>
+            </div>
+            ${actionBtnHTML}
+          `;
+          votingModalList.appendChild(itemDiv);
+        });
+      });
+    }
+
+    window.handleVoteAction = function(targetKey) {
       if (!isAlive || currentPhase !== "voting" || !roomRef || targetKey === myPlayerKey) return;
 
-      roomRef.child(`hasVoted/${myPlayerKey}`).once('value', (snap) => {
-        if (snap.exists()) return showAlert("لقد قمت بالتصويت مسبقاً!");
-
-        roomRef.child(`players/${targetKey}/votes`).transaction(v => (v || 0) + 1);
-        roomRef.child(`hasVoted/${myPlayerKey}`).set(true);
-        showAlert("تم تسجيل صوتك بنجاح!", "التصويت");
+      // لتطبيق ميزة القدرة على تغيير التصويت (مثل Among Us)، نقوم بتحديث اختيار اللاعب مباشرة دون قيود مسبقة
+      roomRef.child(`votingData/${myPlayerKey}`).set(targetKey).then(() => {
+        renderVotingModalContent();
       });
     };
+
+    // الهوست ينهي التصويت يدوياً
+    hostEndVotingBtn.addEventListener('click', () => {
+      if (!roomRef || !isHost || currentPhase !== "voting") return;
+      resolveVoting();
+    });
 
     chatForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1045,15 +1179,16 @@
         roomRef.child('messages').remove();
         roomRef.child('nightActions').remove();
         roomRef.child('investigations').remove();
-        roomRef.child('hasVoted').remove();
+        roomRef.child('votingData').remove();
         roomRef.child('gameLogs').remove();
+        roomRef.update({ roundNumber: 1 });
 
-        addGameLog("🎮 بدأت لعبة جديدة.");
-        startPhase("night", 120, "🌙 بدأ الليل!");
+        addGameLog("🎮 بدأت لعبة جديدة (الجولة الأولى).");
+        // الجولة الأولى: الليل الأول يبدأ بدون حركات (لا قتل ولا حماية ولا تحقيق حسب الطلب)
+        startPhase("night", 120, "🌙 بدأ الليل الأول (هدنة مؤقتة: لا يمكن للمافيا القتل أو الحماية أو التحقيق).");
       });
     });
 
-    // ميزة تخطي الجولة للهوست
     skipPhaseBtn.addEventListener('click', () => {
       if (!roomRef || !isHost) return;
       handlePhaseTimeout();
@@ -1061,10 +1196,10 @@
 
     resetGameBtn.addEventListener('click', () => {
       if (!roomRef || !isHost) return;
-      roomRef.update({ status: "waiting", timer: 0 });
+      roomRef.update({ status: "waiting", timer: 0, roundNumber: 1 });
       roomRef.child('nightActions').remove();
       roomRef.child('investigations').remove();
-      roomRef.child('hasVoted').remove();
+      roomRef.child('votingData').remove();
       roomRef.child('secretRoles').remove();
       roomRef.child('gameLogs').remove();
     });
@@ -1084,22 +1219,21 @@
 
     function startPhase(phaseName, duration, sysMessage) {
       if (!roomRef) return;
-      roomRef.update({ status: phaseName, timer: duration });
+      
+      let updates = { status: phaseName, timer: duration };
+      
+      // إذا تحولنا للنهار أو الليل، يمكننا زيادة رقم الجولة عند بداية الليل الجديد
+      roomRef.update(updates);
       roomRef.child('messages/public').push({ text: sysMessage, isSystem: true });
-      roomRef.child('hasVoted').remove();
-
-      roomRef.child('players').once('value', (snapshot) => {
-        const players = snapshot.val();
-        if (players) {
-          Object.keys(players).forEach(key => roomRef.child(`players/${key}/votes`).set(0));
-        }
-      });
+      roomRef.child('votingData').remove();
     }
 
     setInterval(() => {
       if (!roomRef || !isHost) return;
       roomRef.child('timer').transaction((t) => (t > 0 ? t - 1 : 0), (err, committed, snap) => {
         if (committed && snap.val() === 0 && currentPhase !== "waiting") {
+          // تم إزالة وقت التصويت التلقائي بناءً على طلبك (الهوست هو من ينهي التصويت يدوياً)
+          if (currentPhase === "voting") return; 
           handlePhaseTimeout();
         }
       });
@@ -1108,8 +1242,10 @@
     function handlePhaseTimeout() {
       if (!isHost) return;
       if (currentPhase === "night") resolveNightActions();
-      else if (currentPhase === "day") startPhase("voting", 60, "🗳️ حان وقت التصويت!");
-      else if (currentPhase === "voting") resolveVoting();
+      else if (currentPhase === "day") {
+        // الانتقال لمرحلة التصويت وفتح نافذة التصويت
+        startPhase("voting", 0, "🗳️ حان وقت التصويت! اختر من هو المافيا.");
+      }
     }
 
     function checkWinConditions(players, secretRoles) {
@@ -1134,9 +1270,10 @@
     }
 
     function endGame(winMessage) {
-      roomRef.update({ status: "waiting", timer: 0 });
+      roomRef.update({ status: "waiting", timer: 0, roundNumber: 1 });
       roomRef.child('messages/public').push({ text: winMessage, isSystem: true });
       addGameLog(winMessage);
+      votingModalOverlay.style.display = 'none';
     }
 
     function resolveNightActions() {
@@ -1148,40 +1285,49 @@
 
         if (!players) return;
 
-        let killedKey = null;
-        if (nightActions && nightActions.mafiaVotes) {
-          const voteCounts = {};
-          Object.values(nightActions.mafiaVotes).forEach(target => {
-            voteCounts[target] = (voteCounts[target] || 0) + 1;
-          });
-          let maxV = 0;
-          Object.keys(voteCounts).forEach(t => {
-            if (voteCounts[t] > maxV) {
-              maxV = voteCounts[t];
-              killedKey = t;
-            }
-          });
-        }
-
-        const healedKey = nightActions ? nightActions.healed : null;
         let daySummary = "☀️ أشرقت الشمس!\n";
 
-        if (killedKey && killedKey !== healedKey) {
-          SoundEffects.playKillSound();
-          roomRef.child(`players/${killedKey}`).update({ isAlive: false });
-          daySummary += `❌ اغتالت المافيا اللاعب: ${players[killedKey].name}.`;
-          addGameLog(`❌ تمت تصفية اللاعب (${players[killedKey].name}) ليلاً.`);
-          players[killedKey].isAlive = false;
-        } else if (killedKey && killedKey === healedKey) {
-          daySummary += `🛡️ أنقذ الطبيب الهدف بنجاح!`;
-          addGameLog(`🛡️ نجح الطبيب في الإنقاذ.`);
+        // فحص ما إذا كانت هذه الجولة الأولى (الجولة الأولى تعني عدم حدوث قتل أو حماية)
+        if (currentRoundNumber === 1) {
+          daySummary += `✨ مرت الجولة الأولى بسلام (لا قتل ولا حماية).`;
+          addGameLog(`✨ مرت الجولة الأولى بسلام.`);
         } else {
-          daySummary += `✨ مرّت الليلة بسلام.`;
-          addGameLog(`✨ مرّت الليلة بسلام.`);
+          let killedKey = null;
+          if (nightActions && nightActions.mafiaVotes) {
+            const voteCounts = {};
+            Object.values(nightActions.mafiaVotes).forEach(target => {
+              voteCounts[target] = (voteCounts[target] || 0) + 1;
+            });
+            let maxV = 0;
+            Object.keys(voteCounts).forEach(t => {
+              if (voteCounts[t] > maxV) {
+                maxV = voteCounts[t];
+                killedKey = t;
+              }
+            });
+          }
+
+          const healedKey = nightActions ? nightActions.healed : null;
+
+          if (killedKey && killedKey !== healedKey) {
+            SoundEffects.playKillSound();
+            roomRef.child(`players/${killedKey}`).update({ isAlive: false });
+            daySummary += `❌ اغتالت المافيا اللاعب: ${players[killedKey].name}.`;
+            addGameLog(`❌ تمت تصفية اللاعب (${players[killedKey].name}) ليلاً.`);
+            players[killedKey].isAlive = false;
+          } else if (killedKey && killedKey === healedKey) {
+            daySummary += `🛡️ أنقذ الطبيب الهدف بنجاح!`;
+            addGameLog(`🛡️ نجح الطبيب في الإنقاذ.`);
+          } else {
+            daySummary += `✨ مرّت الليلة بسلام.`;
+            addGameLog(`✨ مرّت الليلة بسلام.`);
+          }
         }
 
         if (checkWinConditions(players, secretRoles)) return;
 
+        // زيادة رقم الجولة القادمة
+        roomRef.update({ roundNumber: currentRoundNumber + 1 });
         startPhase("day", 180, daySummary);
         roomRef.child('nightActions').remove();
       });
@@ -1192,19 +1338,38 @@
         const data = snapshot.val();
         const players = data ? data.players : null;
         const secretRoles = data ? data.secretRoles : {};
+        const votingData = data ? data.votingData : {};
         if (!players) return;
+
+        // حساب الأصوات المستلمة من نافذة التصويت التفاعلية
+        const voteCounts = {};
+        Object.values(votingData).forEach(targetKey => {
+          voteCounts[targetKey] = (voteCounts[targetKey] || 0) + 1;
+        });
 
         let maxVotes = 0;
         let victimKey = null;
+        let isTie = false;
 
-        Object.keys(players).forEach(key => {
-          if (players[key].isAlive && players[key].votes > maxVotes) {
-            maxVotes = players[key].votes;
-            victimKey = key;
+        Object.keys(voteCounts).forEach(targetKey => {
+          const count = voteCounts[targetKey];
+          if (count > maxVotes) {
+            maxVotes = count;
+            victimKey = targetKey;
+            isTie = false;
+          } else if (count === maxVotes && maxVotes > 0) {
+            isTie = true;
           }
         });
 
-        if (victimKey) {
+        votingModalOverlay.style.display = 'none';
+
+        // إذا حدث تعادل في الأصوات يتخطى التصويت ولا يتم إعدام أحد
+        if (isTie || !victimKey || maxVotes === 0) {
+          addGameLog(`🗳️ تعادل الأصوات! تم تخطي الإعدام.`);
+          if (checkWinConditions(players, secretRoles)) return;
+          startPhase("night", 120, "🗳️ تعادل في التصويت وتم تخطيه. حلّ الليل مجدداً...");
+        } else {
           SoundEffects.playKillSound();
           roomRef.child(`players/${victimKey}`).update({ isAlive: false });
           players[victimKey].isAlive = false;
@@ -1213,11 +1378,6 @@
           if (checkWinConditions(players, secretRoles)) return;
 
           startPhase("night", 120, `🗳️ تم إعدام: ${players[victimKey].name}. حلّ الليل مجدداً...`);
-        } else {
-          addGameLog(`🗳️ لم يتم إعدام أحد لتعادل الأصوات.`);
-          if (checkWinConditions(players, secretRoles)) return;
-
-          startPhase("night", 120, "🗳️ لم يتفق أحد. حلّ الليل مجدداً...");
         }
       });
     }

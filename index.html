@@ -1318,9 +1318,12 @@
 
     function handlePhaseTimeout() {
       if (!isHost) return;
-      if (currentPhase === "night") resolveNightActions();
-      else if (currentPhase === "day") {
+      if (currentPhase === "night") {
+        resolveNightActions();
+      } else if (currentPhase === "day") {
         startPhase("voting", 0, "حان وقت التصويت! اختر من هو المافيا.");
+      } else if (currentPhase === "voting") {
+        resolveVoting();
       }
     }
 
